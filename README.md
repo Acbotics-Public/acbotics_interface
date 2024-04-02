@@ -1,5 +1,8 @@
 # Acbotics UDP Interface
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+![package testing](https://github.com/acbotics-public/acbotics_interface/actions/workflows/python-package.yml/badge.svg?branch=main)
+
 This package provides the basic code for the Acbotics UDP Protocol.
 
 ## Installation
