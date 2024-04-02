@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "acbotics_interface"
+version = "0.0.1"
+dependencies = [
+	"numpy",
+	"icontract"
+]
+
+[project.scripts]
+spoof-raw-data = "acbotics_interface.scripts.spoof_udp:spoof_raw_data"
