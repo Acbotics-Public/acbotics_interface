@@ -40,4 +40,4 @@ jobs:
     - name: Test
       run: |
         python3 -c "import acbotics_interface"
-        python3 -m unittest discover acbotics_interface
+        python3 -m unittest discover tests
