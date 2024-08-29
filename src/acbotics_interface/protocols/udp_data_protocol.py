@@ -7,13 +7,17 @@ For help, contact support@acbotics.com
 """
 
 import struct
-from collections import namedtuple
 import numpy
 import sys
-from acbotics_interface.data_containers.data_container_constant_rate import (
+import numpy as np
+import logging
+from collections import namedtuple
+
+from ..data_containers.data_container_constant_rate import (
     DataContainer_Constant_Rate,
 )
-import numpy as np
+
+logger = logging.getLogger(__name__)
 
 header_data = namedtuple(
     "header_data",
@@ -29,24 +33,30 @@ class UDP_Data_Protocol:
         self.version_major = 0
         self.version_minor = 1
         self.header_fmt = "!ccBBcBBIIqIdI"
+        self.header_fmt3 = "!ccBBcBBIfqIdI"
         self.Header_Data = header_data
         # Add scale field
         self.header_length_b = struct.calcsize(self.header_fmt)
 
     def decode_header(self, data):
         if len(data) < 4:
-            print("packet too short. " + repr(data))
+            logger.info("packet too short. " + repr(data))
             return None
         if not data[0] == ord("A") or not data[1] == ord("C"):
-            print("ignoring unrecognized packet header: " + repr(data[0:2]))
+            logger.info("ignoring unrecognized packet header: " + repr(data[0:2]))
             return None
         # extract protocol version
         version_major = data[self.VERSION_MAJOR_IND]
         version_minor = data[self.VERSION_MINOR_IND]
         # eventually use version number to get proper format
-        header = self.Header_Data._make(
-            struct.unpack(self.header_fmt, data[0 : self.header_length_b])
-        )
+        if version_major > 2:
+            header = self.Header_Data._make(
+                struct.unpack(self.header_fmt3, data[0 : self.header_length_b])
+            )
+        else:
+            header = self.Header_Data._make(
+                struct.unpack(self.header_fmt, data[0 : self.header_length_b])
+            )
         return header
 
     def decode_data(self, data, header):

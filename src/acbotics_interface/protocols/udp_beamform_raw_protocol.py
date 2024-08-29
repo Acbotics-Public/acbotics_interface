@@ -10,11 +10,15 @@ import struct
 from collections import namedtuple
 import numpy
 import sys
-from acbotics_interface.data_containers.data_container_beamformed_output_raw import (
-    DataContainer_Beamformed_Output_Raw,
-)
 import numpy as np
 import math
+import logging
+
+from ..data_containers.data_container_beamformed_output_raw import (
+    DataContainer_Beamformed_Output_Raw,
+)
+
+logger = logging.getLogger(__name__)
 
 
 class UDP_Beamform_Raw_Protocol:
@@ -85,13 +89,13 @@ class UDP_Beamform_Raw_Protocol:
 
     def decode_header(self, data):
         if len(data) < 4:
-            print("packet too short. " + repr(data))
+            logger.info("packet too short. " + repr(data))
             return None
         if not data[0] == ord("A") or not data[1] == ord("C"):
-            print("ignoring unrecognized packet header: " + repr(data[0:2]))
+            logger.info("ignoring unrecognized packet header: " + repr(data[0:2]))
             return None
         if not data[2] == ord("B") or not data[3] == ord("R"):
-            print("ignoring wrong type of base message: " + repr(data[2:4]))
+            logger.info("ignoring wrong type of base message: " + repr(data[2:4]))
             return None
 
         # extract protocol version
@@ -105,13 +109,13 @@ class UDP_Beamform_Raw_Protocol:
 
     def decode_continued_header(self, data):
         if len(data) < 4:
-            print("packet too short. " + repr(data))
+            logger.info("packet too short. " + repr(data))
             return None
         if not data[0] == ord("A") or not data[1] == ord("C"):
-            print("ignoring unrecognized packet header: " + repr(data[0:2]))
+            logger.info("ignoring unrecognized packet header: " + repr(data[0:2]))
             return None
         if not data[2] == ord("B") or not data[3] == ord("C"):
-            print("ignoring wrong type of continued message: " + repr(data[2:4]))
+            logger.info("ignoring wrong type of continued message: " + repr(data[2:4]))
             return None
 
         # extract protocol version
@@ -183,7 +187,7 @@ class UDP_Beamform_Raw_Protocol:
             ):
                 swap = True
             else:
-                print(
+                logger.info(
                     "Unrecognized endian combination: "
                     + repr(header.ENDIAN)
                     + " "
@@ -193,7 +197,6 @@ class UDP_Beamform_Raw_Protocol:
 
     def decode_data(self, data, header):
         d = data[self.calculate_data_start_index(header) :]
-        print(len(d))
         data_array = numpy.frombuffer(d, dtype=np.float64)
         data_array = data_array.reshape(header.NUM_THETAS, header.NUM_PHIS, -1)
         if self.needs_byte_swap(header):
@@ -388,8 +391,8 @@ class UDP_Beamform_Raw_Protocol:
             xform_yaw=xform_yaw,
             element_weights=element_weights,
         )
-        print("data shape " + repr(dc.data.shape))
-        print(header)
+        logger.info("data shape " + repr(dc.data.shape))
+        logger.info(header)
         return dc
 
     def encode(

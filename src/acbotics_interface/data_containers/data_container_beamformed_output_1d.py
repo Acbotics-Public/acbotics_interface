@@ -7,8 +7,12 @@ For help, contact support@acbotics.com
 """
 
 import icontract
-from acbotics_interface.data_containers.data_container import DataContainer
 import numpy as np
+import logging
+
+from .data_container import DataContainer
+
+logger = logging.getLogger(__name__)
 
 
 class DataContainer_Beamformed_Output_1D(DataContainer):
@@ -18,7 +22,7 @@ class DataContainer_Beamformed_Output_1D(DataContainer):
     )
     def __init__(self, data, angles, start_time):
         if isinstance(data, list):
-            # print("converting list to array")
+            logger.debug("converting list to array")
             data = np.array(data)
         self.data = data
         self.start_time = start_time

@@ -7,13 +7,17 @@ For help, contact support@acbotics.com
 """
 
 import struct
-from collections import namedtuple
 import numpy
 import sys
-from acbotics_interface.data_containers.data_container_beamformed_output_2d import (
+import numpy as np
+import logging
+from collections import namedtuple
+
+from ..data_containers.data_container_beamformed_output_2d import (
     DataContainer_Beamformed_Output_2D,
 )
-import numpy as np
+
+logger = logging.getLogger(__name__)
 
 
 class UDP_Beamform_2D_Protocol:
@@ -59,13 +63,13 @@ class UDP_Beamform_2D_Protocol:
 
     def decode_header(self, data):
         if len(data) < 4:
-            print("packet too short. " + repr(data))
+            logger.info("packet too short. " + repr(data))
             return None
         if not data[0] == ord("A") or not data[1] == ord("C"):
-            print("ignoring unrecognized packet header: " + repr(data[0:2]))
+            logger.info("ignoring unrecognized packet header: " + repr(data[0:2]))
             return None
         if not data[2] == ord("B") or not data[3] == ord("2"):
-            print("ignoring wrong type of message: " + repr(data[2:4]))
+            logger.info("ignoring wrong type of message: " + repr(data[2:4]))
             return None
 
         # extract protocol version
@@ -137,7 +141,7 @@ class UDP_Beamform_2D_Protocol:
             ):
                 swap = True
             else:
-                print(
+                logger.info(
                     "Unrecognized endian combination: "
                     + repr(header.ENDIAN)
                     + " "
@@ -146,9 +150,9 @@ class UDP_Beamform_2D_Protocol:
         return swap
 
     def decode_data(self, data, header):
-        print(self.calculate_data_start_index(header))
+        logger.info(self.calculate_data_start_index(header))
         d = data[self.calculate_data_start_index(header) :]
-        print(len(d))
+        logger.info(len(d))
         data_array = numpy.frombuffer(d, dtype=np.float64).reshape(
             header.NUM_THETAS, -1
         )
@@ -261,9 +265,9 @@ class UDP_Beamform_2D_Protocol:
         return data_array
 
     def decode(self, data):
-        print(len(data))
+        logger.info(len(data))
         header = self.decode_header(data)
-        print(header)
+        logger.info(header)
         d = self.decode_data(data, header)
         thetas = self.decode_thetas(data, header)
         phis = self.decode_phis(data, header)
@@ -304,8 +308,8 @@ class UDP_Beamform_2D_Protocol:
             xform_yaw=xform_yaw,
             element_weights=element_weights,
         )
-        print("data shape " + repr(dc.data.shape))
-        print(header)
+        logger.info("data shape " + repr(dc.data.shape))
+        logger.info(header)
         return dc
 
     def encode(

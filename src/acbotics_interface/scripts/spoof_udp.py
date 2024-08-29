@@ -8,11 +8,13 @@ For help, contact support@acbotics.com
 
 import time
 import numpy as np
-
 import socket
 import argparse
+import logging
 
-from acbotics_interface.protocols.udp_data_protocol import UDP_Data_Protocol
+from ..protocols.udp_data_protocol import UDP_Data_Protocol
+
+logger = logging.getLogger(__name__)
 
 
 def spoof_raw_data():
@@ -24,16 +26,22 @@ def spoof_raw_data():
     )
 
     parser.add_argument(
-        "--udp_port",
-        type=int,
-        default=5000,
-        help="UDP port to send data to",
+        "--iface_ip",
+        type=str,
+        default="127.0.0.1",
+        help="IP of interface to bind",
     )
     parser.add_argument(
-        "--udp_ip",
+        "--mcast_group",
         type=str,
-        default="localhost",
-        help="UDP IP to send data to",
+        default="224.1.1.1",
+        help="Multicast group to send data to",
+    )
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=9760,
+        help="Port to send data to",
     )
     parser.add_argument(
         "--freq",
@@ -44,18 +52,34 @@ def spoof_raw_data():
 
     args = parser.parse_args()
 
-    print(f"Will send data to {args.udp_ip}:{args.udp_port}")
+    logging.basicConfig(
+        # format="[%(asctime)s] %(name)s.%(funcName)s() : \n\t%(message)s",
+        format="[%(asctime)s] %(levelname)s: %(filename)s:L%(lineno)d : %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+        # level=logging.DEBUG,
+        level=logging.INFO,
+        force=True,
+    )
+
+    logger.info(
+        f"Will send data to {args.mcast_group}:{args.port} via interface with address {args.iface_ip}"
+    )
     if args.freq:
-        print(f"Sample tone frequency is {args.freq}")
+        logger.info(f"Sample tone frequency is {args.freq}")
 
     bot = UDP_Data_Protocol()
 
     Fs = 50000
     num_ch = 8
-    step_size = 32
+    step_size = 64
     delay = step_size / Fs
 
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    # sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    sock.bind((args.iface_ip, 9760))
+
+    sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 2)
 
     pkt_num = 0
     track_time = 0
@@ -71,7 +95,7 @@ def spoof_raw_data():
 
         track_time += step_size
         msg = bot.encode(arr, Fs, np.datetime64(time.time_ns(), "ns"), 1.0, pkt_num)
-        sock.sendto(msg, (args.udp_ip, args.udp_port))
+        sock.sendto(msg, (args.mcast_group, args.port))
 
         pkt_num += 1
         time.sleep(delay)

@@ -7,8 +7,9 @@ For help, contact support@acbotics.com
 """
 
 import icontract
-from acbotics_interface.data_containers.data_container import DataContainer
 import numpy as np
+
+from .data_container import DataContainer
 
 
 class DataContainer_Status(DataContainer):

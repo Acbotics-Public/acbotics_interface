@@ -7,9 +7,13 @@ For help, contact support@acbotics.com
 """
 
 import struct
-from collections import namedtuple
-from acbotics_interface.data_containers.data_container_nav import DataContainer_Nav
 import numpy as np
+import logging
+from collections import namedtuple
+
+from ..data_containers.data_container_nav import DataContainer_Nav
+
+logger = logging.getLogger(__name__)
 
 
 class UDP_Nav_Protocol:
@@ -35,10 +39,10 @@ class UDP_Nav_Protocol:
 
     def decode_header(self, data):
         if len(data) < 4:
-            print("packet too short. " + repr(data))
+            logger.info("packet too short. " + repr(data))
             return None
         if not data[0] == ord("A") or not data[1] == ord("N"):
-            print("ignoring unrecognized packet header: " + repr(data[0:2]))
+            logger.info("ignoring unrecognized packet header: " + repr(data[0:2]))
             return None
         # extract protocol version
         version_major = data[self.VERSION_MAJOR_IND]

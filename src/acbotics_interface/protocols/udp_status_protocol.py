@@ -7,10 +7,14 @@ For help, contact support@acbotics.com
 """
 
 import struct
+import logging
 from collections import namedtuple
-from acbotics_interface.data_containers.data_container_status import (
+
+from ..data_containers.data_container_status import (
     DataContainer_Status,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class UDP_Status_Protocol:
@@ -47,10 +51,10 @@ class UDP_Status_Protocol:
 
     def decode_header(self, data):
         if len(data) < 4:
-            print("packet too short. " + repr(data))
+            logger.info("packet too short. " + repr(data))
             return None
         if not data[0] == ord("A") or not data[1] == ord("S"):
-            print("ignoring unrecognized packet header: " + repr(data[0:2]))
+            logger.info("ignoring unrecognized packet header: " + repr(data[0:2]))
             return None
         # extract protocol version
         version_major = data[self.VERSION_MAJOR_IND]
@@ -100,7 +104,7 @@ class UDP_Status_Protocol:
     def encode(self, dc, packet_number=None):
         if dc.frame_count is None:
             dc.frame_count = 0
-        # print("Data container: " + repr(dc))
+        # logger.info("Data container: " + repr(dc))
         if packet_number is None:
             packet_number = dc.frame_count
 

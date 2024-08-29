@@ -7,9 +7,13 @@ For help, contact support@acbotics.com
 """
 
 import icontract
-from acbotics_interface.data_containers.data_container import DataContainer
 import numpy as np
 import math
+import logging
+
+from .data_container import DataContainer
+
+logger = logging.getLogger(__name__)
 
 
 class DataContainer_Constant_Rate(DataContainer):
@@ -90,7 +94,7 @@ class DataContainer_Constant_Rate(DataContainer):
         if self.data.shape[0] == data.shape[0]:
             self.data = np.append(self.data, data, 1)
         else:
-            print("Number of channels do not match")
+            logger.debug("Number of channels do not match")
             # this gets hit with 1D data
             self.data = np.append(self.data, data)
 

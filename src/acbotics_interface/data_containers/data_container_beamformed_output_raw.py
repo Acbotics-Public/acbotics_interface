@@ -7,8 +7,12 @@ For help, contact support@acbotics.com
 """
 
 import icontract
-from acbotics_interface.data_containers.data_container import DataContainer
 import numpy as np
+import logging
+
+from .data_container import DataContainer
+
+logger = logging.getLogger(__name__)
 
 
 class DataContainer_Beamformed_Output_Raw(DataContainer):
@@ -37,7 +41,7 @@ class DataContainer_Beamformed_Output_Raw(DataContainer):
         element_weights,
     ):
         if isinstance(data, list):
-            # print("converting list to array")
+            # logger.debug("converting list to array")
             data = np.array(data)
         self.data = data
         self.start_time = start_time
@@ -78,8 +82,8 @@ class DataContainer_Beamformed_Output_Raw(DataContainer):
         self.element_weights = element_weights
         if isinstance(self.element_weights, list):
             self.element_weights = np.array(self.element_weights, dtype=np.float64)
-        print(self.element_mask)
-        print(self.array_x)
+        logger.debug(self.element_mask)
+        logger.debug(self.array_x)
         assert self.element_mask.size == self.array_x.size
         assert self.element_weights.size == self.array_x.size
         assert self.array_y.size == self.array_x.size

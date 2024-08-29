@@ -7,9 +7,13 @@ For help, contact support@acbotics.com
 """
 
 import struct
-from collections import namedtuple
-from acbotics_interface.data_containers.data_container_nav import DataContainer_Nav
 import numpy as np
+import logging
+from collections import namedtuple
+
+from ..data_containers.data_container_nav import DataContainer_Nav
+
+logger = logging.getLogger(__name__)
 
 
 class UDP_External_Nav_Protocol:
@@ -22,10 +26,10 @@ class UDP_External_Nav_Protocol:
 
     def decode_header(self, data):
         if len(data) < 4:
-            print("packet too short. " + repr(data))
+            logger.info("packet too short. " + repr(data))
             return None
         if not data[0] == ord("S") or not data[1] == ord("D"):
-            print("ignoring unrecognized packet header: " + repr(data[0:2]))
+            logger.info("ignoring unrecognized packet header: " + repr(data[0:2]))
             return None
         header = self.Header_Data._make(
             struct.unpack(self.header_fmt, data[0 : self.header_length_b])
@@ -43,20 +47,20 @@ class UDP_External_Nav_Protocol:
         try:
             if header.TYPE == "1".encode("utf-8"):
                 # GPGGA
-                print("GPGGA")
+                logger.info("GPGGA")
                 li = nmea_str.split("*")
                 chksum_in = li[1]
                 msg = li[0]
                 li = msg.split(",")
                 if not len(li) == 15:
-                    print(
+                    logger.info(
                         "Expected 15 fields. Received %d fileds in GPGGA message: "
                         % (len(li),)
                         + repr(msg)
                     )
                     return None
                 if not li[0] == "$GPGGA":
-                    print(
+                    logger.info(
                         "Message type mismatch, Expected $GPGGA. Received: "
                         + repr(li[0])
                     )
@@ -97,14 +101,14 @@ class UDP_External_Nav_Protocol:
                 msg = li[0]
                 li = msg.split(",")
                 if not len(li) == 6:
-                    print(
+                    logger.info(
                         "Expected 6 fields. Received %d fileds in $PCHRA message: "
                         % (len(li),)
                         + repr(msg)
                     )
                     return None
                 if not li[0] == "$PCHRA":
-                    print(
+                    logger.info(
                         "Message type mismatch, Expected $PCHRA. Received: "
                         + repr(li[0])
                     )
@@ -132,9 +136,9 @@ class UDP_External_Nav_Protocol:
                 )
                 return dc
         except Exception as e:
-            print("Parse exception on message: " + repr(e))
-            print(repr(header))
-            print(nmea_str)
+            logger.info("Parse exception on message: " + repr(e))
+            logger.info(repr(header))
+            logger.info(nmea_str)
         return None
 
     def encode(self, dc, packet_number=None):
