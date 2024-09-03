@@ -8,7 +8,6 @@ For help, contact support@acbotics.com
 
 import icontract
 import numpy as np
-from future.builtins.misc import isinstance
 import logging
 
 from .data_container import DataContainer
