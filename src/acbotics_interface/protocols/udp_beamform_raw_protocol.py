@@ -391,8 +391,8 @@ class UDP_Beamform_Raw_Protocol:
             xform_yaw=xform_yaw,
             element_weights=element_weights,
         )
-        logger.info("data shape " + repr(dc.data.shape))
-        logger.info(header)
+        logger.debug("data shape " + repr(dc.data.shape))
+        logger.debug(header)
         return dc
 
     def encode(

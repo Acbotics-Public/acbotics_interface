@@ -98,8 +98,8 @@ class DataContainer_Beamformed_Output_Raw(DataContainer):
             self.element_weights = np.array(self.element_weights, dtype=np.float64)
         elif self.element_weights.dtype != np.float64:
             self.element_weights = self.element_weights.astype(np.float64)
-        logger.debug(self.element_mask)
-        logger.debug(self.array_x)
+        logger.debug(f"Element mask : {self.element_mask}")
+        logger.debug(f"Array X : {self.array_x}")
         assert self.element_mask.size == self.array_x.size
         assert self.element_weights.size == self.array_x.size
         assert self.array_y.size == self.array_x.size
