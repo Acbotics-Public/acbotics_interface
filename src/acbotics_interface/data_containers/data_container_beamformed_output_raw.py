@@ -48,30 +48,44 @@ class DataContainer_Beamformed_Output_Raw(DataContainer):
         self.thetas = thetas
         if isinstance(self.thetas, list):
             self.thetas = np.array(self.thetas, dtype=np.float64)
+        elif self.thetas.dtype != np.float64:
+            self.thetas = self.thetas.astype(np.float64)
         self.phis = phis
         if isinstance(self.phis, list):
             self.phis = np.array(self.phis, dtype=np.float64)
+        elif self.phis.dtype != np.float64:
+            self.phis = self.phis.astype(np.float64)
 
         self.frequencies = frequencies
         if isinstance(self.frequencies, list):
             self.frequencies = np.array(self.frequencies, dtype=np.float64)
+        elif self.frequencies.dtype != np.float64:
+            self.frequencies = self.frequencies.astype(np.float64)
 
         self.array_x = array_x
         if isinstance(self.array_x, list):
             self.array_x = np.array(self.array_x, dtype=np.float64)
+        elif self.array_x.dtype != np.float64:
+            self.array_x = self.array_x.astype(np.float64)
 
         self.array_y = array_y
         if isinstance(self.array_y, list):
             self.array_y = np.array(self.array_y, dtype=np.float64)
+        elif self.array_y.dtype != np.float64:
+            self.array_y = self.array_y.astype(np.float64)
 
         self.array_z = array_z
         if isinstance(self.array_z, list):
             self.array_z = np.array(self.array_z, dtype=np.float64)
+        elif self.array_z.dtype != np.float64:
+            self.array_z = self.array_z.astype(np.float64)
 
         self.window_length_s = window_length_s
         self.element_mask = element_mask
         if isinstance(self.element_mask, list):
             self.element_mask = np.array(self.element_mask, dtype=np.uint8)
+        elif self.element_mask.dtype != np.uint8:
+            self.element_mask = self.element_mask.astype(np.uint8)
 
         self.sample_rate = sample_rate
         self.mode = mode
@@ -82,6 +96,8 @@ class DataContainer_Beamformed_Output_Raw(DataContainer):
         self.element_weights = element_weights
         if isinstance(self.element_weights, list):
             self.element_weights = np.array(self.element_weights, dtype=np.float64)
+        elif self.element_weights.dtype != np.float64:
+            self.element_weights = self.element_weights.astype(np.float64)
         logger.debug(self.element_mask)
         logger.debug(self.array_x)
         assert self.element_mask.size == self.array_x.size
