@@ -150,9 +150,7 @@ class UDP_Beamform_2D_Protocol:
         return swap
 
     def decode_data(self, data, header):
-        logger.info(self.calculate_data_start_index(header))
         d = data[self.calculate_data_start_index(header) :]
-        logger.info(len(d))
         data_array = numpy.frombuffer(d, dtype=np.float64).reshape(
             header.NUM_THETAS, -1
         )
@@ -265,9 +263,7 @@ class UDP_Beamform_2D_Protocol:
         return data_array
 
     def decode(self, data):
-        logger.info(len(data))
         header = self.decode_header(data)
-        logger.info(header)
         d = self.decode_data(data, header)
         thetas = self.decode_thetas(data, header)
         phis = self.decode_phis(data, header)
