@@ -22,7 +22,7 @@ pip install -e .
 
 # Install in standard mode:
 # This will install a distribution copy in the user or system package collection;
-# source code updates will not be available prior to reinstallation or package update 
+# source code updates will not be available prior to reinstallation or package update
 pip install .
 ```
 
@@ -46,6 +46,9 @@ sock_aco.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
 sock_aco.bind(("", 9760))
 
+# add multicast group membership to the host interface identified in mreq to receive
+# UDP data; host is the machine running this program and the IP used should match
+# one assigned to the interface on which data is expected (i.e. eth, wifi, loopback)
 group = socket.inet_aton("224.1.1.1")
 mreq = struct.pack("4s4s", group, socket.inet_aton("192.168.1.115"))
 sock_aco.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
@@ -58,7 +61,7 @@ data = handler.decode(msg).data
 
 # Convert int16 samples to voltage
 # > assuming gain set for +/- 1V range; adjust otherwise
-data /= 2**15 
+data /= 2**15
 
 ```
 
