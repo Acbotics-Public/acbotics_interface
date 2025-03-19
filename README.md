@@ -30,11 +30,12 @@ pip install .
 
 ### Module
 
-This package provides an importable module for handling data packets transmitted by the AcSense.
+This package provides an importable module for handling data packets transmitted by the AcSense. The code snippet below will capture a single packet and print out the header and payload. For a basic streaming demo, see `./examples/basic_socket_client.py`.
 
 ```python
 
 import socket
+import struct
 from acbotics_interface.protocols.udp_data_protocol import UDP_Data_Protocol
 
 # Configure a socket to accept UDP data packets
@@ -44,7 +45,8 @@ sock_aco = socket.socket(
 )
 sock_aco.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-sock_aco.bind(("", 9760))
+sock_aco.bind(("", 9760))  # default for acoustic (ACO) data stream
+# sock_aco.bind(("", 9770)) # default for non-acoustic sensor (SENS) data stream
 
 # add multicast group membership to the host interface identified in mreq to receive
 # UDP data; host is the machine running this program and the IP used should match
@@ -60,8 +62,11 @@ header = handler.decode_header(msg)
 data = handler.decode(msg).data
 
 # Convert int16 samples to voltage
-# > assuming gain set for +/- 1V range; adjust otherwise
-data /= 2**15
+# > assuming gain set for +/- 2.5V range; adjust otherwise
+data = data * 2.5 / 2**15
+
+print(header)
+print(data)
 
 ```
 
