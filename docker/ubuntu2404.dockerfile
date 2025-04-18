@@ -52,10 +52,10 @@ RUN cmake .. && make install
 RUN ln -s /usr/local/include/eigen3/Eigen /usr/local/include/Eigen
 
 WORKDIR /
-COPY ./ /tmp/acbotics_interface_cpp
-WORKDIR /tmp/acbotics_interface_cpp
-RUN ./build.sh -c && PYTHONPATH=/tmp/acbotics_interface_cpp/_install/python ./build.sh
-RUN cp -r /tmp/acbotics_interface_cpp/_install /acbotics_interface
+COPY ./ /tmp/acbotics_interface
+WORKDIR /tmp/acbotics_interface
+RUN ./build.sh -c && PYTHONPATH=/tmp/acbotics_interface/_install/python ./build.sh
+RUN cp -r /tmp/acbotics_interface/_install /acbotics_interface
 ARG PYTHONPATH=/acbotics_interface/python
 
 FROM scratch

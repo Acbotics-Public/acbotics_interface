@@ -54,8 +54,7 @@ if ${CLEAN}; then
 fi
 
 
-git submodule init
-git submodule update
+git submodule update --init --recursive
 
 if [ ! -d ${BUILD_DIR} ]; then
     mkdir -p ${BUILD_DIR}
