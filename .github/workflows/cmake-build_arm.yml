@@ -1,0 +1,47 @@
+name: CMake build for arm
+
+on:
+    push:
+        branches: ["main"]
+        tags: ['*']
+    # pull_request:
+    #     branches: ["main"]
+
+jobs:
+    build_arm:
+        runs-on: ubuntu-22.04
+        name: Build for arm on ubuntu
+
+        strategy:
+            matrix:
+                include:
+                    - arch: aarch64
+                      distro: ubuntu22.04
+                    # - arch: armv7
+                    #   distro: ubuntu22.04
+                    # - arch: aarch64
+                    #   distro: bookworm
+                    # - arch: armv7
+                    #   distro: bookworm
+
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                submodules: recursive
+
+            - uses: uraimo/run-on-arch-action@v3
+              name: Run commands
+              with:
+                arch: ${{ matrix.arch }}
+                distro: ${{ matrix.distro }}
+
+                # githubToken: ${{ github.token }}
+                install: |
+                    apt update
+                    apt install -y build-essential gcc clang clang-tools make cmake python3 git
+                    apt install -y python3-dev
+                    apt install -y libunwind-dev libgoogle-glog-dev libsndfile1-dev libgps-dev libeigen3-dev
+                    ln -s /usr/include/eigen3/Eigen /usr/include/Eigen
+
+                run: |
+                    ./build.sh

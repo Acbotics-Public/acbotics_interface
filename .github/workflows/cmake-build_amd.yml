@@ -1,0 +1,41 @@
+name: CMake build for multi-arch
+
+on:
+    push:
+        branches: ["main"]
+        tags: ['*']
+    pull_request:
+        branches: ["main"]
+
+jobs:
+    build_amd64:
+        runs-on: ${{ matrix.os }}
+        name: Build on x86_64
+
+        strategy:
+            fail-fast: false
+
+            matrix:
+                os: [ubuntu-24.04]
+                build_type: [Release]
+                c_compiler: [gcc, clang]
+                include:
+                    - os: ubuntu-24.04
+                      c_compiler: gcc
+                      cpp_compiler: g++
+                    - os: ubuntu-24.04
+                      c_compiler: clang
+                      cpp_compiler: clang++
+
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                submodules: recursive
+            - name: Use build script
+              run: |
+                sudo apt update
+                sudo apt install -y build-essential gcc clang clang-tools make cmake python3  git
+                sudo apt install -y python3-dev
+                sudo apt install -y libunwind-dev libgoogle-glog-dev libsndfile1-dev libgps-dev libeigen3-dev
+                sudo ln -s /usr/include/eigen3/Eigen /usr/include/Eigen
+                ./build.sh

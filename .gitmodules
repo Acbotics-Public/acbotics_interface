@@ -1,0 +1,7 @@
+[submodule "src/python/pybind11"]
+	path = submodules/pybind11
+	url = https://github.com/pybind/pybind11.git
+	branch = v2.12.0
+[submodule "submodules/pocketfft"]
+	path = submodules/pocketfft
+	url = https://github.com/mreineck/pocketfft.git
