@@ -11,9 +11,9 @@
 #define thread_safe_queue_HEADER
 
 #include <condition_variable>
+#include <glog/logging.h>
 #include <mutex>
 #include <queue>
-
 class tsQueueBase {
 public:
   virtual ~tsQueueBase() {} // Virtual destructor for proper cleanup
@@ -27,8 +27,14 @@ private:
   size_t m_length;
 
 public:
-  tsQueue() { this->m_length = 0; }
+  tsQueue() {
+    // Use non-zero default limit to constrain growth when queue is populated but not read.
+    // A max length value of 0 allows unbounded growth.
+    this->m_length = 1000;
+  }
   tsQueue(size_t max_length) : tsQueue() { this->m_length = max_length; }
+
+  void set_queue_length(size_t max_length) { this->m_length = max_length; }
 
   // Insert items
   // ============
@@ -36,6 +42,7 @@ public:
     std::lock_guard<std::mutex> lock(m_mutex);
     m_queue.push(item);
     if (m_length > 0 && m_queue.size() > m_length) {
+      LOG(WARNING) << "Queue at max length of " << m_length << " items; dropping oldest item";
       m_queue.pop();
     }
     m_cond.notify_one();
