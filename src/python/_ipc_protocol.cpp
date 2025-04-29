@@ -43,31 +43,34 @@ void _ipc_protocol(py::module_ &m) {
            })
       .def_readonly("header", &IpcData::header);
 
-  py::class_<IpcFFT, IpcData>(m, "IpcFFT")
+  py::class_<IpcFFT>(m, "IpcFFT")
       .def("__repr__",
            [](const IpcFFT &st) {
              std::ostringstream oss;
              oss << st;
              return oss.str();
            })
+      .def_readonly("header", &IpcFFT::header)
       .def_readonly("fft", &IpcFFT::fft);
 
-  py::class_<IpcDetector, IpcData>(m, "IpcDetector")
+  py::class_<IpcDetector>(m, "IpcDetector")
       .def("__repr__",
            [](const IpcDetector &st) {
              std::ostringstream oss;
              oss << st;
              return oss.str();
            })
+      .def_readonly("header", &IpcDetector::header)
       .def_readonly("detections", &IpcDetector::detections);
 
-  py::class_<IpcBnoState, IpcData>(m, "IpcBnoState")
+  py::class_<IpcBnoState>(m, "IpcBnoState")
       .def("__repr__",
            [](const IpcBnoState &st) {
              std::ostringstream oss;
              oss << st;
              return oss.str();
            })
+      .def_readonly("header", &IpcBnoState::header)
       .def_readonly("accel_x", &IpcBnoState::accel_x)
       .def_readonly("accel_y", &IpcBnoState::accel_y)
       .def_readonly("accel_z", &IpcBnoState::accel_z)

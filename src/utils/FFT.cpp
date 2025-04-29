@@ -148,7 +148,7 @@ void *FFT::_run_fft_thread(void *ptr) {
       while ((data_buffer.cols() - offset) >= argPtr->NFFT) {
 
         fft_frame = std::make_shared<IpcFFT>(argPtr->num_channels, argPtr->nfreq);
-        fft_frame->header.start_time_nsec = data_timestamps[0];
+        fft_frame->header.start_time_nsec = data_timestamps[offset];
 
         fft_frame->header.packet_num = packet_num;
         packet_num = packet_num == std::numeric_limits<int>::max() ? 0 : packet_num + 1;

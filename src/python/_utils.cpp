@@ -131,7 +131,12 @@ void _utils(py::module_ &m) {
       .def(
           "register_client", [](FFT &sst, EnergyDetector &cst) { sst.register_client(cst); },
           py::arg("client"), "Register client")
-      .def("register_client", &FFT::register_client, py::arg("client"), "Register client");
+      .def("register_client", &FFT::register_client, py::arg("client"), "Register client")
+
+      .def("set_channel_filter", py::overload_cast<int>(&FFT::set_channel_filter),
+           py::arg("num_ch"))
+      .def("set_channel_filter", py::overload_cast<std::vector<int>>(&FFT::set_channel_filter),
+           py::arg("ch_filter"));
 
   py::class_<EnergyDetector, FreqDomainBase, QueueClient>(m, "EnergyDetector")
       .def(py::init<>())

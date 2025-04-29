@@ -25,16 +25,19 @@ private:
   std::mutex m_mutex;
   std::condition_variable m_cond;
   size_t m_length;
+  bool show_warning;
 
 public:
   tsQueue() {
     // Use non-zero default limit to constrain growth when queue is populated but not read.
     // A max length value of 0 allows unbounded growth.
     this->m_length = 1000;
+    this->show_warning = true;
   }
   tsQueue(size_t max_length) : tsQueue() { this->m_length = max_length; }
 
   void set_queue_length(size_t max_length) { this->m_length = max_length; }
+  void warn_dropped_data(bool show_warning) { this->show_warning = show_warning; }
 
   // Insert items
   // ============
@@ -42,7 +45,8 @@ public:
     std::lock_guard<std::mutex> lock(m_mutex);
     m_queue.push(item);
     if (m_length > 0 && m_queue.size() > m_length) {
-      LOG(WARNING) << "Queue at max length of " << m_length << " items; dropping oldest item";
+      if (this->show_warning)
+        LOG(WARNING) << "Queue at max length of " << m_length << " items; dropping oldest item";
       m_queue.pop();
     }
     m_cond.notify_one();
