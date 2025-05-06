@@ -71,8 +71,8 @@ void UdpBnrData::csv_header(std::ostream &oss) {
 
 void UdpBnrData::csv_serialize(std::ostream &oss) {
   oss << std::time(nullptr) << "," << std::fixed << this->header.start_time_nsec << ","
-      << this->status << "," << this->quat_i << "," << this->quat_j << "," << this->quat_k << ","
-      << this->quat_r << "," << this->accuracy << std::endl;
+      << (int)this->status << "," << this->quat_i << "," << this->quat_j << "," << this->quat_k
+      << "," << this->quat_r << "," << this->accuracy << std::endl;
 }
 
 std::ostream &operator<<(std::ostream &os, const UdpBnrData &st) {
