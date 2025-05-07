@@ -162,7 +162,8 @@ void _utils(py::module_ &m) {
 
       .def("get_acoustic_data",
            [](InterfaceHelper &sst) -> std::variant<Eigen::MatrixX<int16_t>, int> {
-             sst.latest_time_nsec = sst.q_aco->back()->header.start_time_nsec;
+             if (sst.q_aco->size() > 0)
+               sst.latest_time_nsec = sst.q_aco->back()->header.start_time_nsec;
              if (sst.has_data_aco()) {
                sst.q_request_aco->push(true);
                return sst.q_aco_out->pop();
