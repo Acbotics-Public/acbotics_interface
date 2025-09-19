@@ -36,7 +36,7 @@ void _utils(py::module_ &m) {
       .def("pop_fft", [](QueueClient &sst) { return *sst.q_fft->pop(); })
       .def("pop_bno", [](QueueClient &sst) { return *sst.q_bno->pop(); })
       .def("pop_bnr", [](QueueClient &sst) { return *sst.q_bnr->pop(); })
-      .def("pop_eps", [](QueueClient &sst) { return *sst.q_ept->pop(); })
+      .def("pop_ept", [](QueueClient &sst) { return *sst.q_ept->pop(); })
       .def("pop_pts", [](QueueClient &sst) { return *sst.q_pts->pop(); })
       .def("pop_imu", [](QueueClient &sst) { return *sst.q_imu->pop(); })
       .def("pop_rtc", [](QueueClient &sst) { return *sst.q_rtc->pop(); })
@@ -57,7 +57,24 @@ void _utils(py::module_ &m) {
         case QUEUE::DETECT:
           return sst.q_detect->size();
           break;
-
+        case QUEUE::EPT :
+          return sst.q_ept->size();
+          break;
+        case QUEUE::PTS:
+          return sst.q_pts->size();
+          break;
+        case QUEUE::IMU:
+          return sst.q_imu->size();
+          break;
+        case QUEUE::RTC:
+          return sst.q_rtc->size();
+          break;
+        case QUEUE::BNO:
+          return sst.q_bno->size();
+          break;
+        case QUEUE::BNR:
+          return sst.q_bnr->size();
+          break;
         default:
           return (size_t)0;
           break;
