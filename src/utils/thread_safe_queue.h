@@ -46,7 +46,9 @@ public:
     m_queue.push(item);
     if (m_length > 0 && m_queue.size() > m_length) {
       if (this->show_warning)
-        LOG(WARNING) << "Queue at max length of " << m_length << " items; dropping oldest item";
+      {
+        //LOG(WARNING) << "Queue at max length of " << m_length << " items; dropping oldest item";
+      }
       m_queue.pop();
     }
     m_cond.notify_one();
