@@ -23,6 +23,7 @@
 #include "utils/UdpSocketIn.h"
 
 #include "ipc_protocols/IpcBnoState.h"
+#include "utils/LoggerBlock.h"
 
 namespace py = pybind11;
 
@@ -57,7 +58,7 @@ void _utils(py::module_ &m) {
         case QUEUE::DETECT:
           return sst.q_detect->size();
           break;
-        case QUEUE::EPT :
+        case QUEUE::EPT:
           return sst.q_ept->size();
           break;
         case QUEUE::PTS:
@@ -114,6 +115,19 @@ void _utils(py::module_ &m) {
           py::arg("client"), "Register client")
       // Per overload resolution order, we register the generic QueueClient form as the last choice
       .def("register_client", &UdpSocketIn::register_client, py::arg("client"), "Register client");
+
+  py::class_<LoggerBlock>(m, "LoggerBlock")
+      .def(py::init<>())
+      // .def(py::init<bool, std::string, std::string>())
+      .def("__repr__",
+           [](const LoggerBlock &st) {
+             std::ostringstream oss;
+             oss << st;
+             return oss.str();
+           })
+      .def("set_outdir", &LoggerBlock::set_outdir, py::arg("outdir"))
+      .def("enable_logger", &LoggerBlock::enable_logger, py::arg("logger"), py::arg("enable"))
+      .def("start_logging", &LoggerBlock::start_logging, py::arg("logger"));
 
   py::class_<FreqDomainBase, QueueClient>(m, "FreqDomainBase")
       .def(py::init<>())
