@@ -15,7 +15,7 @@ void Logger_Sensor_Block::set_outdir(std::string logger_outdir)
 }
 
 
-void Logger_Sensor_Block::run_threads()
+void Logger_Sensor_Block::run()
 {
     pthread_t _thread;
     // pthread_create(&_thread, NULL, _run_logger_thread_gps_csv, this);

@@ -60,7 +60,7 @@ void LoggerBlock::stop_logging(LOGGER logger){
 
 
 
-void LoggerBlock::run_threads()
+void LoggerBlock::run()
 {
   pthread_create(&_thread, NULL, _run_logger_thread_audio, this);
 }

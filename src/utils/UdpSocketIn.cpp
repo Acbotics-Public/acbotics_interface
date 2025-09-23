@@ -167,6 +167,9 @@ void *UdpSocketIn::_run_socket_thread(void *ptr) {
   argPtr->_is_running = false;
   pthread_exit(NULL);
 }
+void UdpSocketIn::run() {
+  this->run_socket_thread();
+}
 
 void UdpSocketIn::run_socket_thread() {
   pthread_t thread;

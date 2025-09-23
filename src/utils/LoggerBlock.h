@@ -18,7 +18,7 @@ public:
 
   static void *_run_thread_bno_state_buffer(void *arg);
 
-  void run_threads();
+  void run() override;
   void stop_threads();
   //   template <typename T, LOGGE    R L> T get_latest_data();
 

@@ -44,7 +44,7 @@ public:
 
 protected:
   static void *_run_fft_thread(void *arg);
-
+  void run_fft_thread(void);
   size_t num_channels;
 
   double adc_scale;

@@ -47,7 +47,7 @@ struct UdpSocketIn {
 
   void run_socket_main_thread();
   void run_socket_thread();
-
+  void run();
   void register_client(QueueClient &client);
   bool is_connected();
   void stop();

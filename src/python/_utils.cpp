@@ -103,6 +103,9 @@ void _utils(py::module_ &m) {
            "Run intake socket in main thread")
       .def("run_socket_thread", &UdpSocketIn::run_socket_thread,
            "Run intake socket in separate thread")
+      .def("run", &UdpSocketIn::run,
+           "Run intake socket in separate thread")
+
       // pybind11 requires explicit typing;
       // cannot just use the parent class as in pure C++
       // instead, the child classes must be declared as acceptable inputs
@@ -136,7 +139,7 @@ void _utils(py::module_ &m) {
       // .def("enable_logger", &LoggerBlock::enable_logger, py::arg("logger"), py::arg("enable"))
       .def("start_logging", &LoggerBlock::start_logging, py::arg("logger"))
       .def("stop_logging", &LoggerBlock::stop_logging, py::arg("logger"))
-      .def("run_threads", &LoggerBlock::run_threads);
+      .def("run", &LoggerBlock::run);
 
   py::class_<Logger_Sensor_Block>(m, "Logger_Sensor_Block")
       .def(py::init<>())
@@ -151,7 +154,7 @@ void _utils(py::module_ &m) {
       // .def("enable_logger", &LoggerBlock::enable_logger, py::arg("logger"), py::arg("enable"))
       .def("start_logging", &Logger_Sensor_Block::start_logging)
       .def("stop_logging", &Logger_Sensor_Block::stop_logging)
-      .def("run_threads", &Logger_Sensor_Block::run_threads)
+      .def("run", &Logger_Sensor_Block::run)
       
         ;
   py::class_<FreqDomainBase, QueueClient>(m, "FreqDomainBase")
