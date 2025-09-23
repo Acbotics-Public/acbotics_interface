@@ -4,22 +4,22 @@
 #include "utils/QueueClient.h"
 
 #include "utils/Logger_Acoustic.h"
-
+#include "utils/Types.h"
 
 class LoggerBlock : public QueueClient {
 public:
   void set_outdir(std::string logger_outdir);
-  void set_rollover(LOGGER logger, float rollover_min);
-  void enable_logger(LOGGER, bool);
+  // void set_rollover(LOGGER logger, float rollover_min);
+  // void enable_logger(LOGGER, bool);
   void start_logging(LOGGER);
   void stop_logging(LOGGER);
   void run_log_thread_audio();
-  void *_run_logger_thread_audio(void *arg);
+  static void *_run_logger_thread_audio(void *arg);
 
   static void *_run_thread_bno_state_buffer(void *arg);
 
-  virtual void run_threads();
-  virtual void stop_threads();
+  void run_threads();
+  void stop_threads();
   //   template <typename T, LOGGE    R L> T get_latest_data();
 
 
@@ -28,6 +28,8 @@ protected:
   Logger_Acoustic_FLAC flac_logger;
   Logger_Acoustic_WAV wav_logger;
   std::string logger_outdir;
+  pthread_t _thread;
+
   struct FilenameTime {
     std::time_t fname_time;
     std::time_t rollover_time;
@@ -42,7 +44,6 @@ protected:
 
   // template <typename T, LOGGER L> static void *_run_csv_logger_thread(void *ptr);
   bool initialized=false;
-  bool logging_active();
 };
 
 // template <typename T, LOGGER L> void *LoggerBlock::_run_csv_logger_thread(void *ptr) {

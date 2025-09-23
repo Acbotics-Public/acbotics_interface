@@ -15,6 +15,14 @@ Logger_Acoustic::Logger_Acoustic() {
 }
 
 
+void Logger_Acoustic::Log_ACO_Data(std::shared_ptr<UdpAcousticData> aco_data){}
+
+void Logger_Acoustic::StartFile(){}
+
+void Logger_Acoustic::set_outdir(std::string logger_outdir)
+{
+  this->logger_outdir = logger_outdir;
+}
 
 void Logger_Acoustic::Start() {
   this->running = true;
@@ -56,6 +64,8 @@ void Logger_Acoustic_CSV::StartFile() {
   LOG(INFO) << "Writing to file : " << this->output_filename;
   this->ofil = std::ofstream(this->output_filename);
   this->ofil << this->csv_header.str() << std::endl;
+  this->file_initialized = true;                           
+
 }
 
 void Logger_Acoustic_WAV::StartFile() {
@@ -66,6 +76,7 @@ void Logger_Acoustic_WAV::StartFile() {
 
   ofil_wav = SndfileHandle(output_filename, SFM_WRITE, SF_FORMAT_WAV | SF_FORMAT_PCM_16,
                            num_channels, sample_rate);
+  this->file_initialized = true;                           
 }
 
 void Logger_Acoustic_FLAC::StartFile() {
@@ -83,15 +94,53 @@ void Logger_Acoustic_FLAC::StartFile() {
   }
   VLOG(5) << "=========== NEW FILE(s) =========== ";
   LOG(INFO) << "Writing to files starting with : " << output_filenames.at(0);
+  this->file_initialized = true;                           
+
 }
 
+void Logger_Acoustic::StopFile() {
+}
+
+void Logger_Acoustic_CSV::StopFile() {
+    LOG(INFO) << "Closing file : " << output_filename;
+    ofil.close();
+}
+
+void Logger_Acoustic_FLAC::StopFile() {
+
+    for (int ff = 0; ff < num_files; ff++) {
+      output_files.at(ff).writeSync();
+      LOG(INFO) << "Closing file : " << output_filenames.at(ff);
+    }
+    output_filenames.clear();
+    output_files.clear();
+}
+
+void Logger_Acoustic_WAV::StopFile() {
+    ofil_wav.writeSync();
+    LOG(INFO) << "Closing file : " << output_filename;
+    ofil_wav = SndfileHandle();
+}
+
+
 void Logger_Acoustic_CSV::Log_ACO_Data(std::shared_ptr<UdpAcousticData> aco_data) {
+  if (!this->running)
+  {
+    // we are not active. close out file if still open
+    if (this->file_initialized)
+    {
+      this->StopFile();
+      this->file_initialized=false;
+    }
+    return;
+  }
   if (!ofil.is_open() || !this->file_initialized) {
+    LOG(INFO) << "Starting CVS : " << ofil.is_open() << "  " << this->file_initialized;
+
     this->StartFile();
   }
   if (std::time(nullptr) > this->fntime.rollover_time) {
-    LOG(INFO) << "Closing file : " << output_filename;
-    ofil.close();
+    this->StopFile();
     this->StartFile();
   }
   if (aco_data->data.size() > 0) {
@@ -116,16 +165,22 @@ void Logger_Acoustic_CSV::Log_ACO_Data(std::shared_ptr<UdpAcousticData> aco_data
   }
 }
 void Logger_Acoustic_FLAC::Log_ACO_Data(std::shared_ptr<UdpAcousticData> aco_data) {
+  if (!this->running)
+  {
+    // we are not active. close out file if still open
+    if (this->file_initialized)
+    {
+      this->StopFile();
+      this->file_initialized=false;
+    }
+    return;
+  }
+
   if (!this->file_initialized) {
     this->StartFile();
   }
   if (std::time(nullptr) > this->fntime.rollover_time) {
-    for (int ff = 0; ff < num_files; ff++) {
-      output_files.at(ff).writeSync();
-      LOG(INFO) << "Closing file : " << output_filenames.at(ff);
-    }
-    output_filenames.clear();
-    output_files.clear();
+    this->StopFile();
     this->StartFile();
   }
   for (int ff = 0; ff < num_files; ff++) {
@@ -139,13 +194,24 @@ void Logger_Acoustic_FLAC::Log_ACO_Data(std::shared_ptr<UdpAcousticData> aco_dat
 }
 
 void Logger_Acoustic_WAV::Log_ACO_Data(std::shared_ptr<UdpAcousticData> aco_data) {
+  if (!this->running)
+  {
+    // we are not active. close out file if still open
+    if (this->file_initialized)
+    {
+      this->StopFile();
+      this->file_initialized=false;
+    }
+    return;
+  }
+
   if (!this->file_initialized) {
     this->StartFile();
   }
   if (std::time(nullptr) > this->fntime.rollover_time) {
-    ofil_wav.writeSync();
-    LOG(INFO) << "Closing file : " << output_filename;
-    ofil_wav = SndfileHandle();
+
+    this->StopFile();
+    this->StartFile();
   }
   size_t num_its = aco_data->data.rows() * aco_data->data.cols() * sizeof(aco_data->data(0));
   int16_t buffer[num_its] = {0};
@@ -153,42 +219,3 @@ void Logger_Acoustic_WAV::Log_ACO_Data(std::shared_ptr<UdpAcousticData> aco_data
   ofil_wav.writef(buffer, aco_data->data.cols());
 }
 
-Logger_Acoustic::FilenameTime::FilenameTime(int rollover_min) {
-  // Identify timestamp for file name
-
-  this->reset(rollover_min);
-}
-void Logger_Acoustic::FilenameTime::reset(int rollover_min) {
-  std::time_t ts_now;
-  std::tm tm_now;
-  std::tm tm_fname{};
-  char fname_chr[std::size("YYYYMMDD-hhmmss")];
-  std::time_t tzoffset;
-
-  if (rollover_min == -1) {
-    VLOG(5) << "Using default rollover time: " << this->rollover_min_default << " min";
-    rollover_min = this->rollover_min_default;
-  }
-  if (rollover_min == 0) {
-    LOG(WARNING) << "Rollover time (min) must be greater than zero; using default: 5 min";
-    rollover_min = this->rollover_min_default;
-  }
-
-  ts_now = std::time(nullptr);
-  tm_now = *std::gmtime(&ts_now);
-
-  // <ctime> gives local time via std::time(nullptr) ;
-  // get adjustment for time zone correction:
-  tzoffset = ts_now - std::mktime(&tm_now);
-
-  // Use rollover_min windows for logfile chunking
-  tm_fname = tm_now;
-  tm_fname.tm_min = tm_now.tm_min - (tm_now.tm_min % rollover_min);
-  tm_fname.tm_sec = 0;
-
-  this->rollover_time = (std::mktime(&tm_fname) + (int)(rollover_min * 60) + tzoffset);
-
-  std::strftime(fname_chr, sizeof(fname_chr), "%Y%m%d-%H%M%S", &tm_now);
-  this->fname_time = std::mktime(&tm_now);
-  this->fname_str = std::string(fname_chr);
-}

@@ -24,6 +24,7 @@
 
 #include "ipc_protocols/IpcBnoState.h"
 #include "utils/LoggerBlock.h"
+#include "utils/Logger_Sensor.h"
 
 namespace py = pybind11;
 
@@ -110,6 +111,12 @@ void _utils(py::module_ &m) {
           "register_client", [](UdpSocketIn &sst, FFT &cst) { sst.register_client(cst); },
           py::arg("client"), "Register client")
       .def(
+          "register_client", [](UdpSocketIn &sst, LoggerBlock &cst) { sst.register_client(cst); },
+          py::arg("client"), "Register client")
+      .def(
+          "register_client", [](UdpSocketIn &sst, Logger_Sensor_Block &cst) { sst.register_client(cst); },
+          py::arg("client"), "Register client")
+      .def(
           "register_client",
           [](UdpSocketIn &sst, InterfaceHelper &cst) { sst.register_client(cst); },
           py::arg("client"), "Register client")
@@ -119,16 +126,34 @@ void _utils(py::module_ &m) {
   py::class_<LoggerBlock>(m, "LoggerBlock")
       .def(py::init<>())
       // .def(py::init<bool, std::string, std::string>())
-      .def("__repr__",
-           [](const LoggerBlock &st) {
-             std::ostringstream oss;
-             oss << st;
-             return oss.str();
-           })
+      // .def("__repr__",
+      //      [](const LoggerBlock &st) {
+      //        std::ostringstream oss;
+      //        oss << st;
+      //        return oss.str();
+      //      })
       .def("set_outdir", &LoggerBlock::set_outdir, py::arg("outdir"))
-      .def("enable_logger", &LoggerBlock::enable_logger, py::arg("logger"), py::arg("enable"))
-      .def("start_logging", &LoggerBlock::start_logging, py::arg("logger"));
+      // .def("enable_logger", &LoggerBlock::enable_logger, py::arg("logger"), py::arg("enable"))
+      .def("start_logging", &LoggerBlock::start_logging, py::arg("logger"))
+      .def("stop_logging", &LoggerBlock::stop_logging, py::arg("logger"))
+      .def("run_threads", &LoggerBlock::run_threads);
 
+  py::class_<Logger_Sensor_Block>(m, "Logger_Sensor_Block")
+      .def(py::init<>())
+      // .def(py::init<bool, std::string, std::string>())
+      // .def("__repr__",
+      //      [](const LoggerBlock &st) {
+      //        std::ostringstream oss;
+      //        oss << st;
+      //        return oss.str();
+      //      })
+      .def("set_outdir", &Logger_Sensor_Block::set_outdir, py::arg("outdir"))
+      // .def("enable_logger", &LoggerBlock::enable_logger, py::arg("logger"), py::arg("enable"))
+      .def("start_logging", &Logger_Sensor_Block::start_logging)
+      .def("stop_logging", &Logger_Sensor_Block::stop_logging)
+      .def("run_threads", &Logger_Sensor_Block::run_threads)
+      
+        ;
   py::class_<FreqDomainBase, QueueClient>(m, "FreqDomainBase")
       .def(py::init<>())
       .def("set_sample_rate", &FreqDomainBase::set_sample_rate, py::arg("sample_rate"))

@@ -9,6 +9,7 @@
 #include <sndfile.h>
 #include <sndfile.hh>
 #include <time.h>
+#include "utils/log_filename_time.h"
 
 class Logger_Acoustic {
 public:
@@ -17,24 +18,14 @@ public:
 
   void Start();
   virtual void Stop();
-  virtual void Set();
+  // virtual void Set();
 
   virtual void Log_ACO_Data(std::shared_ptr<UdpAcousticData> aco_data);
   virtual void Initialize_from_aco(std::shared_ptr<UdpAcousticData> aco_data);
   virtual void StartFile();
+  virtual void set_outdir(std::string logger_outdir);
+  virtual void StopFile();
 
-  struct FilenameTime {
-    std::time_t fname_time;
-    std::time_t rollover_time;
-    std::string fname_str;
-
-    FilenameTime() : FilenameTime(-1) {}
-    FilenameTime(int rollover_min);
-    void reset(int rollover_min);
-
-  protected:
-    int rollover_min_default = 5;
-  };
 
 protected:
   bool running;
@@ -52,6 +43,7 @@ class Logger_Acoustic_CSV : public Logger_Acoustic {
 public:
   void Log_ACO_Data(std::shared_ptr<UdpAcousticData> aco_data) override;
   void StartFile() override;
+  void StopFile() override;
   void Initialize_from_aco(std::shared_ptr<UdpAcousticData> aco_data) override;
   //   Logger_Acoustic_CSV(std::string logger_dir);
 protected:
@@ -63,6 +55,7 @@ class Logger_Acoustic_WAV : public Logger_Acoustic {
 public:
   void Log_ACO_Data(std::shared_ptr<UdpAcousticData> aco_data) override;
   void StartFile() override;
+  void StopFile() override;
 
 protected:
   SndfileHandle ofil_wav;
@@ -72,6 +65,7 @@ class Logger_Acoustic_FLAC : public Logger_Acoustic {
 public:
   void Log_ACO_Data(std::shared_ptr<UdpAcousticData> aco_data) override;
   void StartFile() override;
+  void StopFile() override;
   void Initialize_from_aco(std::shared_ptr<UdpAcousticData> aco_data) override;
 
 protected:
