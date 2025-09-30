@@ -168,6 +168,7 @@ void FFT::run_fft_thread()
         offset += this->nstep;
 
         for (auto q_fft : this->v_q_fft) {
+
           q_fft->push(fft_frame);
         }
       }
@@ -190,7 +191,7 @@ void FFT::run_fft_thread()
 }
 
 void *FFT::_run_fft_thread(void *ptr) {
-
+  
   FFT *argPtr = static_cast<FFT *>(ptr);
   argPtr->run_fft_thread();
   pthread_exit(NULL);
@@ -202,6 +203,9 @@ void FFT::run() {
   if (!this->is_running()) {
     pthread_create(&thread, NULL, _run_fft_thread, this);
     this->own_thread = thread;
+  }
+  else{
+        LOG(WARNING) << "FFT thread already running";
   }
 }
 
@@ -215,6 +219,14 @@ void FFT::register_client(QueueClient &client) {
   } else {
     LOG(WARNING) << "Cannot register FFT data queue; received nullptr!";
   }
+}
+
+void FFT::register_client(std::shared_ptr<tsQueue<std::shared_ptr<IpcFFT>>> q_fft)
+{
+      LOG(WARNING) << "Q_FFT client q direct ";
+
+  this->v_q_fft.push_back(q_fft);
+
 }
 
 void FFT::set_adc_scale(double new_adc_scale) {

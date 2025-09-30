@@ -342,7 +342,7 @@ int UdpSocketIn::configure_socket(UdpSocketIn &args) {
   return sock;
 }
 
-void UdpSocketIn::register_client(std::shared_ptr<tsQueue<std::shared_ptr<UdpAcousticData>>> q_aco)
+void UdpSocketIn::register_client_aco(std::shared_ptr<tsQueue<std::shared_ptr<UdpAcousticData>>> q_aco)
 {
   this->v_out_queue.push_back(q_aco);
 
@@ -409,6 +409,39 @@ void UdpSocketIn::register_client(QueueClient &client) {
     LOG(WARNING) << "Cannot register RTC data queue; received nullptr!";
   }
 }
+
+void UdpSocketIn::register_client_ept(std::shared_ptr<tsQueue<std::shared_ptr<UdpEptData>>> q_ept) {
+    v_q_ept.push_back(q_ept);
+}
+
+void UdpSocketIn::register_client_rtc(std::shared_ptr<tsQueue<std::shared_ptr<UdpRtcData>>> q_rtc) {
+    v_q_rtc.push_back(q_rtc);
+}
+
+void UdpSocketIn::register_client_bnr(std::shared_ptr<tsQueue<std::shared_ptr<UdpBnrData>>> q_bnr) {
+    v_q_bnr.push_back(q_bnr);
+}
+
+void UdpSocketIn::register_client_bno(std::shared_ptr<tsQueue<std::shared_ptr<UdpBnoData>>> q_bno) {
+    v_q_bno.push_back(q_bno);
+}
+
+void UdpSocketIn::register_client_imu(std::shared_ptr<tsQueue<std::shared_ptr<UdpImuData>>> q_imu) {
+    v_q_imu.push_back(q_imu);
+}
+
+void UdpSocketIn::register_client_pts(std::shared_ptr<tsQueue<std::shared_ptr<UdpPtsData>>> q_pts) {
+    v_q_pts.push_back(q_pts);
+}
+
+void UdpSocketIn::register_client_beamraw(std::shared_ptr<tsQueue<std::shared_ptr<UdpBeamformRaw>>> q_beamraw) {
+    v_q_beamraw.push_back(q_beamraw);
+}
+void UdpSocketIn::register_client_beam2d(std::shared_ptr<tsQueue<std::shared_ptr<UdpBeamform2D>>> q_beam2d) {
+    v_q_beam2d.push_back(q_beam2d);
+}
+
+
 
 bool UdpSocketIn::is_connected() { return this->m_socket > 0; }
 

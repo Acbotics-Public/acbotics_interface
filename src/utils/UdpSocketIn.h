@@ -48,7 +48,17 @@ struct UdpSocketIn {
   void run_socket_main_thread();
   void run_socket_thread();
   void run();
-  void register_client(std::shared_ptr<tsQueue<std::shared_ptr<UdpAcousticData>>> q_aco);
+  void register_client_aco(std::shared_ptr<tsQueue<std::shared_ptr<UdpAcousticData>>> q_aco);
+  void register_client_rtc(std::shared_ptr<tsQueue<std::shared_ptr<UdpRtcData>>> q_rtc);
+
+  void register_client_ept(std::shared_ptr<tsQueue<std::shared_ptr<UdpEptData>>> q_ept) ;
+  void register_client_bnr(std::shared_ptr<tsQueue<std::shared_ptr<UdpBnrData>>> q_bnr) ;
+  void register_client_bno(std::shared_ptr<tsQueue<std::shared_ptr<UdpBnoData>>> q_bno) ;
+  void register_client_imu(std::shared_ptr<tsQueue<std::shared_ptr<UdpImuData>>> q_imu) ;
+  void register_client_pts(std::shared_ptr<tsQueue<std::shared_ptr<UdpPtsData>>> q_pts);
+  void register_client_beamraw(std::shared_ptr<tsQueue<std::shared_ptr<UdpBeamformRaw>>> q_beamraw);
+  void register_client_beam2d(std::shared_ptr<tsQueue<std::shared_ptr<UdpBeamform2D>>> q_beam2d) ;
+
   void register_client(QueueClient &client);
   bool is_connected();
   void stop();

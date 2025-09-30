@@ -32,14 +32,14 @@
 namespace py = pybind11;
 
 void _utils(py::module_ &m) {
-  py::class_<tsQueue<UdpAcousticData>>  (m, "Q_ACO")
-    .def(py::init<>())
-    .def("pop", [](tsQueue<UdpAcousticData> &qaco) {return qaco.pop();})
-    .def("push", [](tsQueue<UdpAcousticData> &qaco, UdpAcousticData data_frame) {return qaco.push(data_frame);})
-    .def("size", [](tsQueue<UdpAcousticData> &qaco) {return qaco.size();})
-  ;
-  py::class_<tsQueue<std::shared_ptr<UdpAcousticData>>, std::shared_ptr<tsQueue<std::shared_ptr<UdpAcousticData>>>>  (m, "Q_ACO_sp")
-    .def(py::init<>(), py::return_value_policy::take_ownership)
+  // py::class_<tsQueue<UdpAcousticData>>  (m, "Q_ACO")
+  //   .def(py::init<>())
+  //   .def("pop", [](tsQueue<UdpAcousticData> &qaco) {return qaco.pop();})
+  //   .def("push", [](tsQueue<UdpAcousticData> &qaco, UdpAcousticData data_frame) {return qaco.push(data_frame);})
+  //   .def("size", [](tsQueue<UdpAcousticData> &qaco) {return qaco.size();})
+  // ;
+  py::class_<tsQueue<std::shared_ptr<UdpAcousticData>>, std::shared_ptr<tsQueue<std::shared_ptr<UdpAcousticData>>>>  (m, "Q_ACO")
+    // .def(py::init<>(), py::return_value_policy::take_ownership)
     .def("pop", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpAcousticData>>> &qaco) {return qaco->pop();})
     .def("push", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpAcousticData>>> &qaco, std::shared_ptr<UdpAcousticData> data_frame) {return qaco->push(data_frame);})
     .def("size", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpAcousticData>>> &qaco) {return qaco->size();})
@@ -47,6 +47,18 @@ void _utils(py::module_ &m) {
        &tsQueue<std::shared_ptr<UdpAcousticData>>::create)
        )  
     ;
+
+  py::class_<tsQueue<std::shared_ptr<IpcFFT>>, std::shared_ptr<tsQueue<std::shared_ptr<IpcFFT>>>>  (m, "Q_FFT")
+    // .def(py::init<>(), py::return_value_policy::take_ownership)
+    .def("pop", [](std::shared_ptr<tsQueue<std::shared_ptr<IpcFFT>>> &qfft) {return qfft->pop();})
+    .def("push", [](std::shared_ptr<tsQueue<std::shared_ptr<IpcFFT>>> &qfft, std::shared_ptr<IpcFFT> data_frame) {return qfft->push(data_frame);})
+    .def("size", [](std::shared_ptr<tsQueue<std::shared_ptr<IpcFFT>>> &qfft) {return qfft->size();})
+    .def_static("create",py::overload_cast<>(
+       &tsQueue<std::shared_ptr<IpcFFT>>::create)
+       )  
+    ;
+
+
 
   py::class_<QueueClient>(m, "QueueClient")
       .def(py::init<>())
@@ -129,7 +141,31 @@ void _utils(py::module_ &m) {
       // instead, the child classes must be declared as acceptable inputs
       // and the order of overload resolution should be accounted for
       .def(
-          "register_client", [](UdpSocketIn &sst, ptr_tsQ<UdpAcousticData> cb) { sst.register_client(cb); },
+          "register_client_aco", [](UdpSocketIn &sst, ptr_tsQ<UdpAcousticData> cb) { sst.register_client_aco(cb); },
+          py::arg("client"), "Register client")
+      .def(
+          "register_client_rtc", [](UdpSocketIn &sst, ptr_tsQ<UdpRtcData> cb) { sst.register_client_rtc(cb); },
+          py::arg("client"), "Register client")
+      .def(
+          "register_client_ept", [](UdpSocketIn &sst, ptr_tsQ<UdpEptData> cb) { sst.register_client_ept(cb); },
+          py::arg("client"), "Register client")
+      .def(
+          "register_client_bnr", [](UdpSocketIn &sst, ptr_tsQ<UdpBnrData> cb) { sst.register_client_bnr(cb); },
+          py::arg("client"), "Register client")
+      .def(
+          "register_client_bno", [](UdpSocketIn &sst, ptr_tsQ<UdpBnoData> cb) { sst.register_client_bno(cb); },
+          py::arg("client"), "Register client")
+      .def(
+          "register_client_imu", [](UdpSocketIn &sst, ptr_tsQ<UdpImuData> cb) { sst.register_client_imu(cb); },
+          py::arg("client"), "Register client")
+      .def(
+          "register_client_pts", [](UdpSocketIn &sst, ptr_tsQ<UdpPtsData> cb) { sst.register_client_pts(cb); },
+          py::arg("client"), "Register client")
+      .def(
+          "register_client_beamraw", [](UdpSocketIn &sst, ptr_tsQ<UdpBeamformRaw> cb) { sst.register_client_beamraw(cb); },
+          py::arg("client"), "Register client")
+      .def(
+          "register_client_beam2d", [](UdpSocketIn &sst, ptr_tsQ<UdpBeamform2D> cb) { sst.register_client_beam2d(cb); },
           py::arg("client"), "Register client")
       .def(
           "register_client", [](UdpSocketIn &sst, QueueClient &client) { sst.register_client(client); },
@@ -215,18 +251,27 @@ void _utils(py::module_ &m) {
           py::arg("start_time_nsec"), py::arg("time_series"),
           "Add time-series data to acoustic queue");
 
-  py::class_<FFT, FreqDomainBase, QueueClient>(m, "FFT")
-      .def(py::init<>())
+  py::class_<FFT, std::shared_ptr<FFT>>(m, "FFT")
+      //.def(py::init<>())
       .def(
-          "register_client", [](FFT &sst, EnergyDetector &cst) { sst.register_client(cst); },
+          "register_client", [](FFT &sst, std::shared_ptr<tsQueue<std::shared_ptr<IpcFFT>>> cst) { sst.register_client(cst); },
           py::arg("client"), "Register client")
-      .def("register_client", &FFT::register_client, py::arg("client"), "Register client")
-
+      // .def(
+      //     "register_client", [](FFT &sst, EnergyDetector &cst) { sst.register_client(cst); },
+      //     py::arg("client"), "Register client")
+      // .def("register_client", &FFT::register_client, py::arg("client"), "Register client")
+      .def("get_input_queue", py::overload_cast<>(&FFT::get_input_queue)
+           )
       .def("set_channel_filter", py::overload_cast<int>(&FFT::set_channel_filter),
            py::arg("num_ch"))
       .def("set_channel_filter", py::overload_cast<std::vector<int>>(&FFT::set_channel_filter),
-           py::arg("ch_filter"));
+           py::arg("ch_filter"))
+      .def("run", &FFT::run)
 
+      .def_static("create", py::overload_cast<>(  
+          &FFT::create)
+       ) 
+      ;
   py::class_<EnergyDetector, FreqDomainBase, QueueClient>(m, "EnergyDetector")
       .def(py::init<>())
       .def("register_client", &EnergyDetector::register_client, py::arg("client"),

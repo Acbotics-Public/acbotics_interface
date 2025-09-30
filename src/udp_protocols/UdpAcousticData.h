@@ -82,7 +82,12 @@ struct UdpAcousticData : public UdpData {
                     int32_t adc_count,
                     int32_t packet_num)
   {
-    return std::make_shared<UdpAcousticData>();
+    return std::make_shared<UdpAcousticData>(data,
+          num_channels,
+          num_values,
+          sample_rate,
+          start_time_ns,
+          tick_time_ns,adc_count,packet_num);
   }
 
   bool unpack_data(std::vector<int8_t> &buff);

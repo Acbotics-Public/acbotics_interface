@@ -20,6 +20,8 @@ struct IpcFFT : virtual public IpcData {
   IpcFFT();
   IpcFFT(Eigen::MatrixXcd &fft);
   IpcFFT(size_t rows, size_t cols);
+  const Eigen::MatrixXcd &viewData() { return fft; }
+
 };
 
 std::ostream &operator<<(std::ostream &os, const IpcFFT &st);

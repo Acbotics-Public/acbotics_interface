@@ -43,7 +43,7 @@ void _ipc_protocol(py::module_ &m) {
            })
       .def_readonly("header", &IpcData::header);
 
-  py::class_<IpcFFT>(m, "IpcFFT")
+  py::class_<IpcFFT, std::shared_ptr<IpcFFT>>(m, "IpcFFT")
       .def("__repr__",
            [](const IpcFFT &st) {
              std::ostringstream oss;
@@ -51,7 +51,8 @@ void _ipc_protocol(py::module_ &m) {
              return oss.str();
            })
       .def_readonly("header", &IpcFFT::header)
-      .def_readonly("fft", &IpcFFT::fft);
+      .def_readonly("fft", &IpcFFT::fft)
+      .def("viewData", &IpcFFT::viewData, py::return_value_policy::reference_internal);
 
   py::class_<IpcDetector>(m, "IpcDetector")
       .def("__repr__",
