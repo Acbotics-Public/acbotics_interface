@@ -168,13 +168,13 @@ void *UdpSocketIn::_run_socket_thread(void *ptr) {
   pthread_exit(NULL);
 }
 void UdpSocketIn::run() {
-  VLOG(4) << ("Running UdpSocketIn");
+  LOG(WARNING) << ("Running UdpSocketIn");
   this->run_socket_thread();
 }
 
 void UdpSocketIn::run_socket_thread() {
   pthread_t thread;
-  VLOG(4) << ("Running UdpSocketIn Thread");
+  LOG(WARNING) << ("Running UdpSocketIn Thread");
 
   pthread_create(&thread, NULL, _run_socket_thread, this);
   this->own_thread = thread;

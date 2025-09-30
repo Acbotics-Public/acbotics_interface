@@ -63,6 +63,13 @@ struct UdpSocketIn {
   bool is_connected();
   void stop();
 
+  static std::shared_ptr<UdpSocketIn> create(bool use_mcast, std::string iface_ip, int32_t port, std::string mcast_group)
+  {
+    return std::make_shared<UdpSocketIn>(use_mcast, iface_ip, port, mcast_group);
+  };
+
+
+
 protected:
   pthread_t own_thread;
   int m_socket;

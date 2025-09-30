@@ -115,6 +115,10 @@ void _utils(py::module_ &m) {
 
   py::class_<UdpSocketIn, std::shared_ptr<UdpSocketIn>>(m, "UdpSocketIn")
       .def(py::init<>())
+      .def_static("create", py::overload_cast<bool,  std::string, int32_t , std::string>(  
+          &UdpSocketIn::create)
+       )
+
       // .def(py::init<bool, std::string, std::string>())
       .def(py::init<bool, std::string, int32_t, std::string>(), py::arg("use_mcast"),
            py::arg("iface_ip"), py::arg("port"), py::arg("mcast_group"))
