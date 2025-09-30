@@ -251,7 +251,7 @@ void _utils(py::module_ &m) {
           py::arg("start_time_nsec"), py::arg("time_series"),
           "Add time-series data to acoustic queue");
 
-  py::class_<FFT, std::shared_ptr<FFT>>(m, "FFT")
+  py::class_<FFT, FreqDomainBase, std::shared_ptr<FFT>>(m, "FFT")
       //.def(py::init<>())
       .def(
           "register_client", [](FFT &sst, std::shared_ptr<tsQueue<std::shared_ptr<IpcFFT>>> cst) { sst.register_client(cst); },
