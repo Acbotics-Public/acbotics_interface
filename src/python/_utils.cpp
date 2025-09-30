@@ -113,7 +113,7 @@ void _utils(py::module_ &m) {
         }
       });
 
-  py::class_<UdpSocketIn>(m, "UdpSocketIn")
+  py::class_<UdpSocketIn, std::shared_ptr<UdpSocketIn>>(m, "UdpSocketIn")
       .def(py::init<>())
       // .def(py::init<bool, std::string, std::string>())
       .def(py::init<bool, std::string, int32_t, std::string>(), py::arg("use_mcast"),

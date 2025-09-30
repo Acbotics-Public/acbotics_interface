@@ -174,6 +174,8 @@ void UdpSocketIn::run() {
 
 void UdpSocketIn::run_socket_thread() {
   pthread_t thread;
+  VLOG(4) << ("Running UdpSocketIn Thread");
+
   pthread_create(&thread, NULL, _run_socket_thread, this);
   this->own_thread = thread;
 }
