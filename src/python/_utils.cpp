@@ -272,12 +272,12 @@ void _utils(py::module_ &m) {
           &FFT::create)
        ) 
       ;
-  py::class_<EnergyDetector, FreqDomainBase, QueueClient>(m, "EnergyDetector")
+  py::class_<EnergyDetector, FreqDomainBase, QueueClient, std::shared_ptr<EnergyDetector>>(m, "EnergyDetector")
       .def(py::init<>())
       .def("register_client", &EnergyDetector::register_client, py::arg("client"),
            "Register client");
 
-  py::class_<InterfaceHelper, QueueClient>(m, "InterfaceHelper")
+  py::class_<InterfaceHelper, QueueClient, std::shared_ptr<InterfaceHelper>>(m, "InterfaceHelper")
       .def(py::init<>())
       .def_readwrite("fft", &InterfaceHelper::_fft_helper)
       .def("add_socket", &InterfaceHelper::add_socket, py::arg("use_mcast"), py::arg("iface_ip"),
