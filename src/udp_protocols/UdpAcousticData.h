@@ -11,7 +11,7 @@
 #define udp_acoustic_data_HEADER
 
 #include <Eigen/Dense>
-
+#include <memory>
 #include "UdpData.h"
 
 struct UdpAcousticData : public UdpData {
@@ -60,9 +60,31 @@ struct UdpAcousticData : public UdpData {
 
   // May need better way to allocate this, if data_size becomes configurable
   Eigen::MatrixX<int16_t> data;
-
+  const Eigen::MatrixX<int16_t> &viewData() { return data; }
   UdpAcousticData();
+  UdpAcousticData(  Eigen::MatrixX<int16_t> data,
+                    int8_t num_channels,
+                    int32_t num_values,
+                    float sample_rate,
+                    int64_t start_time_ns,
+                    uint64_t tick_time_ns,
+                    int32_t adc_count,
+                    int32_t packet_num
+); // used for python injection
   UdpAcousticData(std::vector<int8_t> &buff);
+
+  static std::shared_ptr<UdpAcousticData> create(Eigen::MatrixX<int16_t> data,
+                    int8_t num_channels,
+                    int32_t num_values,
+                    float sample_rate,
+                    int64_t start_time_ns,
+                    uint64_t tick_time_ns,
+                    int32_t adc_count,
+                    int32_t packet_num)
+  {
+    return std::make_shared<UdpAcousticData>();
+  }
+
   bool unpack_data(std::vector<int8_t> &buff);
 };
 

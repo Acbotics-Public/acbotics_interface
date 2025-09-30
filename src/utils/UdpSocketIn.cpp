@@ -232,6 +232,10 @@ void UdpSocketIn::run_socket_main_thread() {
       for (auto q_aco : argPtr->v_q_aco) {
         q_aco->push(aco_data);
       }
+      for (auto out_queue: argPtr->v_out_queue)
+      {
+        out_queue->push(aco_data);
+      }
     }
   }
 }
@@ -337,6 +341,14 @@ int UdpSocketIn::configure_socket(UdpSocketIn &args) {
 
   return sock;
 }
+
+void UdpSocketIn::register_client(std::shared_ptr<tsQueue<std::shared_ptr<UdpAcousticData>>> q_aco)
+{
+  this->v_out_queue.push_back(q_aco);
+
+}
+
+
 
 void UdpSocketIn::register_client(QueueClient &client) {
   LOG(INFO) << "Registering " << client.get_name();

@@ -39,6 +39,10 @@ public:
   void set_queue_length(size_t max_length) { this->m_length = max_length; }
   void warn_dropped_data(bool show_warning) { this->show_warning = show_warning; }
 
+  static std::shared_ptr<tsQueue<T>> create()
+  {
+    return std::make_shared<tsQueue<T>>();
+  }
   // Insert items
   // ============
   void push(T item) {

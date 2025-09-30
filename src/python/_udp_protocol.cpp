@@ -50,14 +50,70 @@ void _udp_protocol(py::module_ &m) {
       .def_readonly("id", &UdpData::Header::id)
       .def_readonly("num_bytes", &UdpData::Header::num_bytes);
 
-  py::class_<UdpAcousticData>(m, "UdpAcousticData")
+
+  // py::class_<UdpAcousticData>(m, "UdpAcousticData")
+  //     .def(py::init<Eigen::MatrixX<int16_t>,
+  //                   int8_t,
+  //                   int32_t,
+  //                   float,
+  //                   int64_t ,
+  //                   uint64_t ,
+  //                   int32_t ,
+  //                   int32_t >(), 
+  //                   py::arg("data"),
+  //                   py::arg("num_channels"),
+  //                   py::arg("num_values"), 
+  //                   py::arg("sample_rate"),
+  //                   py::arg("start_time_ns"), 
+  //                   py::arg("tick_time_ns"),
+  //                   py::arg("adc_count"), 
+  //                   py::arg("packt_num")
+  //     )
+  //     .def("__repr__",
+  //          [](const UdpAcousticData &hh) {
+  //            std::ostringstream oss;
+  //            oss << hh;
+  //            return oss.str();
+  //          })
+  //     .def_readonly("header", &UdpAcousticData::header)
+  //     .def("viewData", &UdpAcousticData::viewData, py::return_value_policy::reference_internal);
+
+  py::class_<UdpAcousticData, std::shared_ptr<UdpAcousticData>>(m, "UdpAcousticData")
+      // .def("__repr__",
+      //      [](const UdpData &hh) {
+      //        std::ostringstream oss;
+      //        oss << hh;
+      //        return oss.str();
+      //      })
+      .def_readonly("header", &UdpAcousticData::header)
+      .def_static("create",py::overload_cast<Eigen::MatrixX<int16_t>,
+                    int8_t,
+                    int32_t,
+                    float,
+                    int64_t ,
+                    uint64_t ,
+                    int32_t ,
+                    int32_t >
+                    // py::arg("data"),
+                    // py::arg("num_channels"),
+                    // py::arg("num_values"), 
+                    // py::arg("sample_rate"),
+                    // py::arg("start_time_ns"), 
+                    // py::arg("tick_time_ns"),
+                    // py::arg("adc_count"), 
+                    // py::arg("packt_num")
+                    (&UdpAcousticData::create
+      ))
+      .def("viewData", &UdpAcousticData::viewData, py::return_value_policy::reference_internal)
       .def("__repr__",
            [](const UdpAcousticData &hh) {
              std::ostringstream oss;
              oss << hh;
              return oss.str();
            })
-      .def_readonly("header", &UdpAcousticData::header);
+
+      ;
+
 
   py::class_<UdpAcousticData::Header>(m, "UdpAcousticData_Header")
       .def("__repr__",
@@ -69,6 +125,9 @@ void _udp_protocol(py::module_ &m) {
       .def_readonly("num_channels", &UdpAcousticData::Header ::num_channels)
       .def_readonly("sample_rate", &UdpAcousticData::Header ::sample_rate)
       .def_readonly("tick_time_nsec", &UdpAcousticData::Header::tick_time_nsec)
+      .def_readonly("start_time_nsec", &UdpAcousticData::Header::start_time_nsec)
+      .def_readonly("adc_count", &UdpAcousticData::Header::adc_count)
+      .def_readonly("packet_num", &UdpAcousticData::Header::packet_num)
 
       // FIXME : remove getters get_num_channels(), get_sample_rate()
       .def("get_num_channels", [](const UdpAcousticData::Header &hh) { return hh.num_channels; })

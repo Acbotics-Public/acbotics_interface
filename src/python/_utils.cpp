@@ -14,6 +14,9 @@
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <pybind11/functional.h>
+#include <pybind11/complex.h>
+#include <pybind11/chrono.h>
 
 #include <Eigen/Dense>
 #include <variant>
@@ -29,6 +32,21 @@
 namespace py = pybind11;
 
 void _utils(py::module_ &m) {
+  py::class_<tsQueue<UdpAcousticData>>  (m, "Q_ACO")
+    .def(py::init<>())
+    .def("pop", [](tsQueue<UdpAcousticData> &qaco) {return qaco.pop();})
+    .def("push", [](tsQueue<UdpAcousticData> &qaco, UdpAcousticData data_frame) {return qaco.push(data_frame);})
+    .def("size", [](tsQueue<UdpAcousticData> &qaco) {return qaco.size();})
+  ;
+  py::class_<tsQueue<std::shared_ptr<UdpAcousticData>>, std::shared_ptr<tsQueue<std::shared_ptr<UdpAcousticData>>>>  (m, "Q_ACO_sp")
+    .def(py::init<>(), py::return_value_policy::take_ownership)
+    .def("pop", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpAcousticData>>> &qaco) {return qaco->pop();})
+    .def("push", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpAcousticData>>> &qaco, std::shared_ptr<UdpAcousticData> data_frame) {return qaco->push(data_frame);})
+    .def("size", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpAcousticData>>> &qaco) {return qaco->size();})
+    .def_static("create",py::overload_cast<>(
+       &tsQueue<std::shared_ptr<UdpAcousticData>>::create)
+       )  
+    ;
 
   py::class_<QueueClient>(m, "QueueClient")
       .def(py::init<>())
@@ -111,6 +129,12 @@ void _utils(py::module_ &m) {
       // instead, the child classes must be declared as acceptable inputs
       // and the order of overload resolution should be accounted for
       .def(
+          "register_client", [](UdpSocketIn &sst, ptr_tsQ<UdpAcousticData> cb) { sst.register_client(cb); },
+          py::arg("client"), "Register client")
+      .def(
+          "register_client", [](UdpSocketIn &sst, QueueClient &client) { sst.register_client(client); },
+          py::arg("client"), "Register client")
+      .def(
           "register_client", [](UdpSocketIn &sst, FFT &cst) { sst.register_client(cst); },
           py::arg("client"), "Register client")
       .def(
@@ -122,9 +146,9 @@ void _utils(py::module_ &m) {
       .def(
           "register_client",
           [](UdpSocketIn &sst, InterfaceHelper &cst) { sst.register_client(cst); },
-          py::arg("client"), "Register client")
+          py::arg("client"), "Register client");
       // Per overload resolution order, we register the generic QueueClient form as the last choice
-      .def("register_client", &UdpSocketIn::register_client, py::arg("client"), "Register client");
+      //.def("register_client", &UdpSocketIn::register_client, py::arg("client"), "Register client");
 
   py::class_<LoggerBlock>(m, "LoggerBlock")
       .def(py::init<>())

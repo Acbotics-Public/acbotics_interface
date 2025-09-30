@@ -18,9 +18,9 @@
 DECLARE_bool(debug_socket_in);
 
 enum class MSG_ID { UNKNOWN, ACB2, ACBR, ACBC, ACO, PTS, IMU, EPT, RTC, BNO, BNR };
-
 struct UdpSocketIn {
   bool use_mcast;
+  std::vector<std::shared_ptr<tsQueue<std::shared_ptr<UdpAcousticData>>>> v_out_queue;
   std::string iface_ip;
   int32_t port;
   std::string mcast_group;
@@ -48,6 +48,7 @@ struct UdpSocketIn {
   void run_socket_main_thread();
   void run_socket_thread();
   void run();
+  void register_client(std::shared_ptr<tsQueue<std::shared_ptr<UdpAcousticData>>> q_aco);
   void register_client(QueueClient &client);
   bool is_connected();
   void stop();

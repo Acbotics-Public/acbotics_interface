@@ -31,7 +31,7 @@ public:
     this->use_channel_filter = false;
   };
 
-  void run();
+  void run() override;
   void register_client(QueueClient &client);
 
   void set_adc_scale(double new_adc_scale);
