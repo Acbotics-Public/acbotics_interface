@@ -104,6 +104,11 @@ void *UdpSocketIn::_run_socket_thread(void *ptr) {
         for (auto q_aco : argPtr->v_q_aco) {
           q_aco->push(aco_data);
         }
+        for (auto out_queue: argPtr->v_out_queue)
+        {
+          out_queue->push(aco_data);
+        }
+
       }
 
       break;
