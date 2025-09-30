@@ -273,9 +273,12 @@ void _utils(py::module_ &m) {
        ) 
       ;
   py::class_<EnergyDetector, FreqDomainBase, QueueClient, std::shared_ptr<EnergyDetector>>(m, "EnergyDetector")
-      .def(py::init<>())
+      // .def(py::init<>())
       .def("register_client", &EnergyDetector::register_client, py::arg("client"),
-           "Register client");
+           "Register client")
+      .def_static("create", py::overload_cast<>(  
+          &EnergyDetector::create)
+       );
 
   py::class_<InterfaceHelper, QueueClient, std::shared_ptr<InterfaceHelper>>(m, "InterfaceHelper")
       .def(py::init<>())
