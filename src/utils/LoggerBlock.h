@@ -20,6 +20,11 @@ public:
 
   void run() override;
   void stop_threads();
+  std::shared_ptr<tsQueue<std::shared_ptr<UdpAcousticData>>>get_input_queue()
+  {
+    return this->q_aco;
+  };
+
   //   template <typename T, LOGGE    R L> T get_latest_data();
 
 

@@ -195,10 +195,13 @@ void _utils(py::module_ &m) {
       //        oss << st;
       //        return oss.str();
       //      })
+      .def("get_input_queue", py::overload_cast<>(&LoggerBlock::get_input_queue)
+           )
       .def("set_outdir", &LoggerBlock::set_outdir, py::arg("outdir"))
       // .def("enable_logger", &LoggerBlock::enable_logger, py::arg("logger"), py::arg("enable"))
       .def("start_logging", &LoggerBlock::start_logging, py::arg("logger"))
       .def("stop_logging", &LoggerBlock::stop_logging, py::arg("logger"))
+      
       .def("run", &LoggerBlock::run);
 
   py::class_<Logger_Sensor_Block>(m, "Logger_Sensor_Block")
@@ -276,6 +279,8 @@ void _utils(py::module_ &m) {
       // .def(py::init<>())
       .def("register_client", &EnergyDetector::register_client, py::arg("client"),
            "Register client")
+      .def("get_input_queue", py::overload_cast<>(&EnergyDetector::get_input_queue)
+           )
       .def_static("create", py::overload_cast<>(  
           &EnergyDetector::create)
        );
