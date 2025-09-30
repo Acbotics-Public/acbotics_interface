@@ -60,7 +60,7 @@ void _utils(py::module_ &m) {
 
 
 
-  py::class_<QueueClient>(m, "QueueClient")
+  py::class_<QueueClient, std::shared_ptr<QueueClient>>(m, "QueueClient")
       .def(py::init<>())
       .def("run", &QueueClient::run)
       .def("stop", &QueueClient::stop)
@@ -217,7 +217,7 @@ void _utils(py::module_ &m) {
       .def("run", &Logger_Sensor_Block::run)
       
         ;
-  py::class_<FreqDomainBase, QueueClient>(m, "FreqDomainBase")
+  py::class_<FreqDomainBase, QueueClient, std::shared_ptr<FreqDomainBase>>(m, "FreqDomainBase")
       .def(py::init<>())
       .def("set_sample_rate", &FreqDomainBase::set_sample_rate, py::arg("sample_rate"))
       .def("set_NFFT", &FreqDomainBase::set_NFFT, py::arg("NFFT"))
