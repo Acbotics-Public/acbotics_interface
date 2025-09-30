@@ -168,6 +168,7 @@ void *UdpSocketIn::_run_socket_thread(void *ptr) {
   pthread_exit(NULL);
 }
 void UdpSocketIn::run() {
+  VLOG(4) << ("Running UdpSocketIn");
   this->run_socket_thread();
 }
 
