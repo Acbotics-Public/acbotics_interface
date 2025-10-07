@@ -67,6 +67,56 @@ void _utils(py::module_ &m) {
        &tsQueue<std::shared_ptr<UdpPtsData>>::create)
        )  
     ;
+      py::class_<tsQueue<std::shared_ptr<UdpEptData>>, std::shared_ptr<tsQueue<std::shared_ptr<UdpEptData>>>>  (m, "Q_EPT")
+    // .def(py::init<>(), py::return_value_policy::take_ownership)
+    .def("pop", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpEptData>>> &qept) {return qept->pop();})
+    .def("push", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpEptData>>> &qept, std::shared_ptr<UdpEptData> data_frame) {return qept->push(data_frame);})
+    .def("size", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpEptData>>> &qept) {return qept->size();})
+    .def_static("create",py::overload_cast<>(
+       &tsQueue<std::shared_ptr<UdpEptData>>::create)
+       )  
+    ;
+      py::class_<tsQueue<std::shared_ptr<UdpRtcData>>, std::shared_ptr<tsQueue<std::shared_ptr<UdpRtcData>>>>  (m, "Q_RTC")
+    // .def(py::init<>(), py::return_value_policy::take_ownership)
+    .def("pop", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpRtcData>>> &qrtc) {return qrtc->pop();})
+    .def("push", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpRtcData>>> &qrtc, std::shared_ptr<UdpRtcData> data_frame) {return qrtc->push(data_frame);})
+    .def("size", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpRtcData>>> &qrtc) {return qrtc->size();})
+    .def_static("create",py::overload_cast<>(
+       &tsQueue<std::shared_ptr<UdpRtcData>>::create)
+       )  
+    ;
+
+      py::class_<tsQueue<std::shared_ptr<UdpImuData>>, std::shared_ptr<tsQueue<std::shared_ptr<UdpImuData>>>>  (m, "Q_IMU")
+    // .def(py::init<>(), py::return_value_policy::take_ownership)
+    .def("pop", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpImuData>>> &qimu) {return qimu->pop();})
+    .def("push", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpImuData>>> &qimu, std::shared_ptr<UdpImuData> data_frame) {return qimu->push(data_frame);})
+    .def("size", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpImuData>>> &qimu) {return qimu->size();})
+    .def_static("create",py::overload_cast<>(
+       &tsQueue<std::shared_ptr<UdpImuData>>::create)
+       )  
+    ;
+
+      py::class_<tsQueue<std::shared_ptr<UdpBnoData>>, std::shared_ptr<tsQueue<std::shared_ptr<UdpBnoData>>>>  (m, "Q_BNO")
+    // .def(py::init<>(), py::return_value_policy::take_ownership)
+    .def("pop", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpBnoData>>> &qbno) {return qbno->pop();})
+    .def("push", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpBnoData>>> &qbno, std::shared_ptr<UdpBnoData> data_frame) {return qbno->push(data_frame);})
+    .def("size", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpBnoData>>> &qbno) {return qbno->size();})
+    .def_static("create",py::overload_cast<>(
+       &tsQueue<std::shared_ptr<UdpBnoData>>::create)
+       )  
+    ;
+
+
+      py::class_<tsQueue<std::shared_ptr<UdpBnrData>>, std::shared_ptr<tsQueue<std::shared_ptr<UdpBnrData>>>>  (m, "Q_BNR")
+    // .def(py::init<>(), py::return_value_policy::take_ownership)
+    .def("pop", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpBnrData>>> &qbnr) {return qbnr->pop();})
+    .def("push", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpBnrData>>> &qbnr, std::shared_ptr<UdpBnrData> data_frame) {return qbnr->push(data_frame);})
+    .def("size", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpBnrData>>> &qbnr) {return qbnr->size();})
+    .def_static("create",py::overload_cast<>(
+       &tsQueue<std::shared_ptr<UdpBnrData>>::create)
+       )  
+    ;
+
 
 
   py::class_<QueueClient, std::shared_ptr<QueueClient>>(m, "QueueClient")
