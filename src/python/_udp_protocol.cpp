@@ -134,6 +134,12 @@ void _udp_protocol(py::module_ &m) {
       .def_readonly("gyro_y", &UdpImuData::gyro_y)
       .def_readonly("gyro_z", &UdpImuData::gyro_z);
 
+  py::enum_<BNO_TYPE>(m,"BNO_TYPE")
+      .value("UNKNOWN", BNO_TYPE::UNKNOWN)
+      .value("ACCEL", BNO_TYPE::ACCEL)
+      .value("GYRO", BNO_TYPE::GYRO)
+      .value("MAG", BNO_TYPE::MAG);
+
   py::class_<UdpBnoData, std::shared_ptr<UdpBnoData>>(m, "UdpBnoData")
       .def("__repr__",
            [](const UdpBnoData &st) {
