@@ -58,6 +58,15 @@ void _utils(py::module_ &m) {
        )  
     ;
 
+  py::class_<tsQueue<std::shared_ptr<UdpPtsData>>, std::shared_ptr<tsQueue<std::shared_ptr<UdpPtsData>>>>  (m, "Q_PTS")
+    // .def(py::init<>(), py::return_value_policy::take_ownership)
+    .def("pop", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpPtsData>>> &qpts) {return qpts->pop();})
+    .def("push", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpPtsData>>> &qpts, std::shared_ptr<UdpPtsData> data_frame) {return qpts->push(data_frame);})
+    .def("size", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpPtsData>>> &qpts) {return qpts->size();})
+    .def_static("create",py::overload_cast<>(
+       &tsQueue<std::shared_ptr<UdpPtsData>>::create)
+       )  
+    ;
 
 
   py::class_<QueueClient, std::shared_ptr<QueueClient>>(m, "QueueClient")

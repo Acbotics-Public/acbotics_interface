@@ -223,10 +223,7 @@ void FFT::register_client(QueueClient &client) {
 
 void FFT::register_client(std::shared_ptr<tsQueue<std::shared_ptr<IpcFFT>>> q_fft)
 {
-      LOG(WARNING) << "Q_FFT client q direct ";
-
   this->v_q_fft.push_back(q_fft);
-
 }
 
 void FFT::set_adc_scale(double new_adc_scale) {

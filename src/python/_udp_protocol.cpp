@@ -106,7 +106,7 @@ void _udp_protocol(py::module_ &m) {
         return os.str();
       });
 
-  py::class_<UdpPtsData>(m, "UdpPtsData")
+  py::class_<UdpPtsData, std::shared_ptr<UdpPtsData>>(m, "UdpPtsData")
       .def("__repr__",
            [](const UdpPtsData &st) {
              std::ostringstream oss;
