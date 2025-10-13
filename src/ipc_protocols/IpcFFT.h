@@ -16,6 +16,7 @@
 
 struct IpcFFT : virtual public IpcData {
   Eigen::MatrixXcd fft;
+  double FS=-1;
 
   IpcFFT();
   IpcFFT(Eigen::MatrixXcd &fft);

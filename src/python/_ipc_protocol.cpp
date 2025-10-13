@@ -52,6 +52,7 @@ void _ipc_protocol(py::module_ &m) {
            })
       .def_readonly("header", &IpcFFT::header)
       .def_readonly("fft", &IpcFFT::fft)
+      .def_readonly("FS", &IpcFFT::FS)
       .def("viewData", &IpcFFT::viewData, py::return_value_policy::reference_internal);
 
   py::class_<IpcDetector>(m, "IpcDetector")

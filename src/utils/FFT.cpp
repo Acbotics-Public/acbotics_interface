@@ -102,7 +102,7 @@ void FFT::run_fft_thread()
     if (this->_rx_runtime_update) {
       audio_scale = 1.0 / pow(2, 15) * this->adc_scale;
     }
-
+    double fs = -1;
     if (this->q_aco->size() > 0) {
 
       new_packets = this->q_aco->pop_limit(10);
@@ -119,7 +119,6 @@ void FFT::run_fft_thread()
                 << data_buffer.cols() + ncols;
       data_buffer.conservativeResize(Eigen::NoChange, data_buffer.cols() + ncols);
       data_timestamps.conservativeResize(data_timestamps.size() + ncols);
-
       for (int ii = 0; ii < new_packets.size(); ii++) {
         aco_pkt = new_packets.at(ii);
         ncols = aco_pkt->data.cols();
@@ -131,7 +130,7 @@ void FFT::run_fft_thread()
           data_buffer.block(0, icol, this->num_channels, ncols) =
               (aco_pkt->data.cast<double>() * audio_scale);
         }
-
+        fs = aco_pkt->header.sample_rate;
         data_timestamps.segment(icol, ncols) =
             Eigen::Matrix<int64_t, Eigen::Dynamic, 1>::LinSpaced(aco_pkt->data.cols(), 0,
                                                                  1e9 / aco_pkt->header.sample_rate *
@@ -149,6 +148,7 @@ void FFT::run_fft_thread()
 
         fft_frame = std::make_shared<IpcFFT>(this->num_channels, this->nfreq);
         fft_frame->header.start_time_nsec = data_timestamps[offset];
+        fft_frame->FS=fs;
 
         fft_frame->header.packet_num = packet_num;
         packet_num = packet_num == std::numeric_limits<int>::max() ? 0 : packet_num + 1;
