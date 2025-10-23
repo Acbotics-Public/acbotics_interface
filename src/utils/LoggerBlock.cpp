@@ -16,6 +16,13 @@ void *LoggerBlock::_run_logger_thread_audio(void *ptr)
   pthread_exit(NULL);
 
 }
+std::vector<std::string> LoggerBlock::get_current_paths(void)
+{
+  std::vector<std::string> vec;
+  vec.push_back(this->csv_logger.get_current_path());
+
+}
+
 
 void LoggerBlock::set_outdir(std::string logger_outdir)
 {

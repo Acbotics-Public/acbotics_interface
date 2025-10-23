@@ -45,6 +45,7 @@ public:
   void StartFile() override;
   void StopFile() override;
   void Initialize_from_aco(std::shared_ptr<UdpAcousticData> aco_data) override;
+  std::string get_current_path();
   //   Logger_Acoustic_CSV(std::string logger_dir);
 protected:
   std::ofstream ofil;

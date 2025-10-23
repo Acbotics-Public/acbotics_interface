@@ -14,6 +14,7 @@ public:
   void start_logging();
   void stop_logging();
   void run_log_thread_audio();
+  std::vector<std::string> get_current_paths(void);
   static void *_run_logger_thread_audio(void *arg);
 
   static void *_run_thread_bno_state_buffer(void *arg);

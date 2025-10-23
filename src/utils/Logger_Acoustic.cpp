@@ -44,6 +44,10 @@ void Logger_Acoustic_CSV::Initialize_from_aco(std::shared_ptr<UdpAcousticData> a
   }
   csv_header << num_channels - 1;
 }
+std::string Logger_Acoustic_CSV::get_current_path() {
+  return this->output_filename;
+}
+
 void Logger_Acoustic_FLAC::Initialize_from_aco(std::shared_ptr<UdpAcousticData> aco_data) {
   Logger_Acoustic::Initialize_from_aco(aco_data);
 
