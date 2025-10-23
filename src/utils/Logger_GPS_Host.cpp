@@ -35,7 +35,6 @@ void Logger_GPS_Host_Block::run_csv_logger_thread() {
 
 //   this->logger_running = true;
 
-  std::string output_filename;
   std::ostringstream csv_header;
 
   csv_header << "host_epoch_sec,gps_epoch_sec,lat,lon,sats,mode,status,altHAE,epx,epy,epv,epd,track,speed,eps,eph,climb,epc";
@@ -131,6 +130,12 @@ void Logger_GPS_Host_Block::run_csv_logger_thread() {
   }
 
   pthread_exit(NULL);
+}
+std::vector<std::string> Logger_GPS_Host_Block::get_current_paths(void)
+{
+  std::vector<std::string> vec;
+  vec.push_back(this->output_filename);
+  return vec;
 }
 
 

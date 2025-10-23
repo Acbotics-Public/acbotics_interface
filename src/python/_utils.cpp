@@ -265,6 +265,7 @@ void _utils(py::module_ &m) {
       // .def("enable_logger", &LoggerBlock::enable_logger, py::arg("logger"), py::arg("enable"))
       .def("start_logging", &LoggerBlock::start_logging)
       .def("stop_logging", &LoggerBlock::stop_logging)
+      .def("get_current_paths", &LoggerBlock::get_current_paths)
       
       .def("run", &LoggerBlock::run);
 
@@ -282,6 +283,7 @@ void _utils(py::module_ &m) {
       .def("start_logging", &Logger_Sensor_Block::start_logging)
       .def("stop_logging", &Logger_Sensor_Block::stop_logging)
       .def("run", &Logger_Sensor_Block::run)
+      .def("get_current_paths", &Logger_Sensor_Block::get_current_paths)
       
         ;
   py::class_<Logger_GPS_Host_Block>(m, "Logger_GPS_Host_Block")
@@ -290,6 +292,7 @@ void _utils(py::module_ &m) {
       .def("start_logging", &Logger_GPS_Host_Block::start_logging)
       .def("stop_logging", &Logger_GPS_Host_Block::stop_logging)
       .def("run", &Logger_GPS_Host_Block::run)
+      .def("get_current_paths", &Logger_GPS_Host_Block::get_current_paths)
       
         ;
 

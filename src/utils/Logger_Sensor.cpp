@@ -46,8 +46,6 @@ template <typename T, LOGGER L> void Logger_Sensor_Block::run_csv_logger_thread(
   prctl(PR_SET_NAME, ("ac_log_" + LOGGER_NAME[L]).c_str());
   VLOG(3) << "Starting " << LOGGER_NAME[L] << " CSV logger in thread " << pthread_self();
 
-  std::string output_filename;
-
   std::vector<std::shared_ptr<T>> _data_vec;
   std::shared_ptr<T> _data;
 
@@ -58,11 +56,11 @@ template <typename T, LOGGER L> void Logger_Sensor_Block::run_csv_logger_thread(
   while (this->keep_alive) {
     if (this->logging_active) {
       FilenameTime fntime = FilenameTime(this->rollover_min[L]);
-      output_filename = this->logger_outdir + LOGGER_NAME[L] + "_" + fntime.fname_str + ".csv";
+      this->output_filename[L] = this->logger_outdir + LOGGER_NAME[L] + "_" + fntime.fname_str + ".csv";
 
       VLOG(5) << "=========== NEW FILE =========== ";
-      LOG(INFO) << "Writing to file : " << output_filename;
-      std::ofstream ofil(output_filename);
+      LOG(INFO) << "Writing to file : " << this->output_filename[L];
+      std::ofstream ofil(this->output_filename[L]);
       wrote_header = false;
 
       while (this->keep_alive && logging_active && ofil.is_open() &&
@@ -89,7 +87,7 @@ template <typename T, LOGGER L> void Logger_Sensor_Block::run_csv_logger_thread(
         // rest here, to allow for external control switch
         usleep(10000);
       }
-      LOG(INFO) << "Closing file : " << output_filename;
+      LOG(INFO) << "Closing file : " << this->output_filename[L];
       ofil.close();
     } else {
       usleep(100000);
@@ -102,6 +100,20 @@ template <typename T, LOGGER L> void *Logger_Sensor_Block::_run_csv_logger_threa
   Logger_Sensor_Block *argPtr = static_cast<Logger_Sensor_Block *>(ptr);
   argPtr->run_csv_logger_thread<T, L>();
   pthread_exit(NULL);
+}
+
+
+std::vector<std::string> Logger_Sensor_Block::get_current_paths(void)
+{
+  std::vector<std::string> vec;
+  vec.push_back(this->output_filename[LOGGER::GPS]);
+  vec.push_back(this->output_filename[LOGGER::PTS]);
+  vec.push_back(this->output_filename[LOGGER::EPT]);
+  vec.push_back(this->output_filename[LOGGER::IMU]);
+  vec.push_back(this->output_filename[LOGGER::RTC]);
+  vec.push_back(this->output_filename[LOGGER::BNO]);
+  vec.push_back(this->output_filename[LOGGER::BNR]);
+  return vec;
 }
 
 

@@ -20,7 +20,7 @@ std::vector<std::string> LoggerBlock::get_current_paths(void)
 {
   std::vector<std::string> vec;
   vec.push_back(this->csv_logger.get_current_path());
-
+  return vec;
 }
 
 

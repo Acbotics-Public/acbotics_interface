@@ -19,6 +19,7 @@ public:
   void start_logging();
   void stop_logging();
   void run();
+  std::vector<std::string> get_current_paths(void);
 
   virtual void set_outdir(std::string logger_outdir);
   static void *_run_csv_logger_thread(void *ptr);
@@ -29,6 +30,7 @@ protected:
   std::vector<pthread_t> threads;
   float rollover_min;
   std::string logger_outdir;
+  std::string output_filename="";
 
 };
 

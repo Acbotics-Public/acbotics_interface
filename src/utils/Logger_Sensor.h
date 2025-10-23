@@ -23,11 +23,13 @@ public:
   virtual void set_outdir(std::string logger_outdir);
   template <typename T, LOGGER L> static void *_run_csv_logger_thread(void *ptr);
   template <typename T, LOGGER L> void run_csv_logger_thread();
+  std::vector<std::string> get_current_paths(void);
 
 protected:
     bool logging_active = false;
   std::vector<pthread_t> threads;
   std::unordered_map<LOGGER, float> rollover_min;
+  std::unordered_map<LOGGER, std::string> output_filename;
   std::string logger_outdir;
 
 };
