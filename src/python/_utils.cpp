@@ -28,6 +28,7 @@
 #include "ipc_protocols/IpcBnoState.h"
 #include "utils/LoggerBlock.h"
 #include "utils/Logger_Sensor.h"
+#include "utils/Logger_GPS_Host.h"
 
 namespace py = pybind11;
 
@@ -283,6 +284,15 @@ void _utils(py::module_ &m) {
       .def("run", &Logger_Sensor_Block::run)
       
         ;
+  py::class_<Logger_GPS_Host_Block>(m, "Logger_GPS_Host_Block")
+      .def(py::init<>())
+      .def("set_outdir", &Logger_GPS_Host_Block::set_outdir, py::arg("outdir"))
+      .def("start_logging", &Logger_GPS_Host_Block::start_logging)
+      .def("stop_logging", &Logger_GPS_Host_Block::stop_logging)
+      .def("run", &Logger_GPS_Host_Block::run)
+      
+        ;
+
   py::class_<FreqDomainBase, QueueClient, std::shared_ptr<FreqDomainBase>>(m, "FreqDomainBase")
       .def(py::init<>())
       .def("set_sample_rate", &FreqDomainBase::set_sample_rate, py::arg("sample_rate"))
