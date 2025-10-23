@@ -20,42 +20,18 @@ void *LoggerBlock::_run_logger_thread_audio(void *ptr)
 void LoggerBlock::set_outdir(std::string logger_outdir)
 {
   this->csv_logger.set_outdir(logger_outdir);
-this->wav_logger.set_outdir(logger_outdir);
-this->flac_logger.set_outdir(logger_outdir);
+// this->wav_logger.set_outdir(logger_outdir);
+// this->flac_logger.set_outdir(logger_outdir);
 }
 
-void LoggerBlock::start_logging(LOGGER logger){
+void LoggerBlock::start_logging(){
 {
-  if (logger == LOGGER::ACO_CSV)
-  {
     this->csv_logger.Start();
-
-  }
-  else if (logger == LOGGER::ACO_FLAC)
-  {
-    this->flac_logger.Start();    
-  }
-  else if (logger == LOGGER::ACO_WAV)
-  {
-    this->wav_logger.Start();
-  }  
 }
 
 }
-void LoggerBlock::stop_logging(LOGGER logger){
-  if (logger == LOGGER::ACO_CSV)
-  {
-    this->csv_logger.Stop();
-
-  }
-  else if (logger == LOGGER::ACO_FLAC)
-  {
-    this->flac_logger.Stop();    
-  }
-  else if (logger == LOGGER::ACO_WAV)
-  {
-    this->wav_logger.Stop();
-  }  
+void LoggerBlock::stop_logging(){
+  this->csv_logger.Stop();
 }
 
 

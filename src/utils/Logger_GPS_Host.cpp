@@ -38,7 +38,7 @@ void Logger_GPS_Host_Block::run_csv_logger_thread() {
   std::string output_filename;
   std::ostringstream csv_header;
 
-  csv_header << "host_epoch_sec,gps_epoch_sec,lat,lon";
+  csv_header << "host_epoch_sec,gps_epoch_sec,lat,lon,sats,mode,status,altHAE,epx,epy,epv,epd,track,speed,eps,eph,climb,epc";
 
   //   struct gps_data_t latest_gps_data;
 
@@ -113,7 +113,6 @@ void Logger_GPS_Host_Block::run_csv_logger_thread() {
           ofil << "," << new_gps_data->fix.track << "," << new_gps_data->fix.speed;
           ofil << "," << new_gps_data->fix.eps << "," << new_gps_data->fix.eph;
           ofil << "," << new_gps_data->fix.climb << "," << new_gps_data->fix.epc;
-          ofil << "," << new_gps_data->fix.eps << "," << new_gps_data->fix.speed;
 
 
           ofil << std::setprecision(default_precision) << std::defaultfloat;

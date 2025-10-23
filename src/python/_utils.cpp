@@ -263,8 +263,8 @@ void _utils(py::module_ &m) {
            )
       .def("set_outdir", &LoggerBlock::set_outdir, py::arg("outdir"))
       // .def("enable_logger", &LoggerBlock::enable_logger, py::arg("logger"), py::arg("enable"))
-      .def("start_logging", &LoggerBlock::start_logging, py::arg("logger"))
-      .def("stop_logging", &LoggerBlock::stop_logging, py::arg("logger"))
+      .def("start_logging", &LoggerBlock::start_logging)
+      .def("stop_logging", &LoggerBlock::stop_logging)
       
       .def("run", &LoggerBlock::run);
 

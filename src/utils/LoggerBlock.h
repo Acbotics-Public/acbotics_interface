@@ -11,8 +11,8 @@ public:
   void set_outdir(std::string logger_outdir);
   // void set_rollover(LOGGER logger, float rollover_min);
   // void enable_logger(LOGGER, bool);
-  void start_logging(LOGGER);
-  void stop_logging(LOGGER);
+  void start_logging();
+  void stop_logging();
   void run_log_thread_audio();
   static void *_run_logger_thread_audio(void *arg);
 
