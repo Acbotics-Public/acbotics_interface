@@ -38,7 +38,7 @@ void Logger_Acoustic::Initialize_from_aco(std::shared_ptr<UdpAcousticData> aco_d
 
 void Logger_Acoustic_CSV::Initialize_from_aco(std::shared_ptr<UdpAcousticData> aco_data) {
   Logger_Acoustic::Initialize_from_aco(aco_data);
-  csv_header << "epoch_nsec,tick_time_nsec,adc_count,packet_num,";
+  csv_header << "packet_epoch_nsec,frame_tick_time_nsec,adc_count,packet_num,";
   for (int ii = 0; ii < num_channels - 1; ii++) {
     csv_header << ii << ",";
   }
@@ -146,12 +146,12 @@ void Logger_Acoustic_CSV::Log_ACO_Data(std::shared_ptr<UdpAcousticData> aco_data
   if (aco_data->data.size() > 0) {
     for (int ii = 0; ii < (aco_data->header.num_values / aco_data->header.num_channels); ii++) {
       ofil << std::fixed
-           << aco_data->header.start_time_nsec +
-                  (int64_t)(ii / (double)aco_data->header.sample_rate * 1e9)
+           << aco_data->header.start_time_nsec //+
+                  //(int64_t)(ii / (double)aco_data->header.sample_rate * 1e9)
            << ",";
       ofil << std::fixed
-           << aco_data->header.tick_time_nsec +
-                  (int64_t)(ii / (double)aco_data->header.sample_rate * 1e9)
+           << aco_data->header.tick_time_nsec //+
+                  //(int64_t)(ii / (double)aco_data->header.sample_rate * 1e9)
            << ",";
       ofil << std::fixed << aco_data->header.adc_count + ii << ",";
 
