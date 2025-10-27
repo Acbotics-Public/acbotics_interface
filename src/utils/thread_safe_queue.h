@@ -52,6 +52,7 @@ public:
       if (this->show_warning)
       {
         LOG(WARNING) << "Queue at max length of " << m_length << " items; dropping oldest item";
+        LOG(WARNING) << typeid(T).name();
       }
       m_queue.pop();
     }
@@ -67,6 +68,8 @@ public:
       if (this->show_warning)
       {
         LOG(WARNING) << "Queue at max length of " << m_length << " items; dropping oldest item";
+        LOG(WARNING) << typeid(T).name();
+
       }
       m_queue.pop();
     }
