@@ -38,7 +38,7 @@ void Logger_Acoustic::Initialize_from_aco(std::shared_ptr<UdpAcousticData> aco_d
 
 void Logger_Acoustic_CSV::Initialize_from_aco(std::shared_ptr<UdpAcousticData> aco_data) {
   Logger_Acoustic::Initialize_from_aco(aco_data);
-  csv_header << "packet_epoch_nsec,frame_tick_time_nsec,adc_count,packet_num,";
+  csv_header << "host_epoch_sec,packet_epoch_nsec,frame_tick_time_nsec,sample_tick_interp_nsec,adc_count,packet_num,";
   for (int ii = 0; ii < num_channels - 1; ii++) {
     csv_header << ii << ",";
   }
@@ -68,7 +68,8 @@ void Logger_Acoustic_CSV::StartFile() {
   LOG(INFO) << "Writing to file : " << this->output_filename;
   this->ofil = std::ofstream(this->output_filename);
   this->ofil << this->csv_header.str() << std::endl;
-  this->file_initialized = true;                           
+  this->file_initialized = true;   
+  this->interpolation_initialized = false;                        
 
 }
 
@@ -148,7 +149,15 @@ void Logger_Acoustic_CSV::Log_ACO_Data(std::shared_ptr<UdpAcousticData> aco_data
     this->StartFile();
   }
   if (aco_data->data.size() > 0) {
+    if (!this->interpolation_initialized)
+    {
+      this->adc_count_file_start = aco_data->header.adc_count;
+      this->tick_file_start_ns = aco_data->header.tick_time_nsec;
+      this->interpolation_initialized = true;
+    }
+
     for (int ii = 0; ii < (aco_data->header.num_values / aco_data->header.num_channels); ii++) {
+      ofil << std::time(nullptr)<< ",";
       ofil << std::fixed
            << aco_data->header.start_time_nsec //+
                   //(int64_t)(ii / (double)aco_data->header.sample_rate * 1e9)
@@ -157,6 +166,10 @@ void Logger_Acoustic_CSV::Log_ACO_Data(std::shared_ptr<UdpAcousticData> aco_data
            << aco_data->header.tick_time_nsec //+
                   //(int64_t)(ii / (double)aco_data->header.sample_rate * 1e9)
            << ",";
+      ofil << std::fixed
+           << ((aco_data->header.adc_count+ ii-this->adc_count_file_start) / (double)aco_data->header.sample_rate )*1e9 + this->tick_file_start_ns
+           << ",";
+
       ofil << std::fixed << aco_data->header.adc_count + ii << ",";
 
       ofil << aco_data->header.packet_num << ",";

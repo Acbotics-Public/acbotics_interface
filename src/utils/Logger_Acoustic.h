@@ -50,6 +50,10 @@ public:
 protected:
   std::ofstream ofil;
   std::ostringstream csv_header;
+  bool interpolation_initialized =false;
+  long adc_count_file_start = 0;
+  long tick_file_start_ns = 0;
+
 };
 
 class Logger_Acoustic_WAV : public Logger_Acoustic {
