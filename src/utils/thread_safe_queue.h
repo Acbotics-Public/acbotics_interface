@@ -32,7 +32,7 @@ public:
     // Use non-zero default limit to constrain growth when queue is populated but not read.
     // A max length value of 0 allows unbounded growth.
     this->m_length = 1000;
-    this->show_warning = true;
+    this->show_warning = false;
   }
   tsQueue(size_t max_length) : tsQueue() { this->m_length = max_length; }
 
