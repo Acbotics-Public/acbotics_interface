@@ -71,7 +71,7 @@ void UdpAcousticData::Header::decode(std::vector<int8_t> &buff) {
   std::memcpy(&packet_num, buff_raw + offset, sizeof(packet_num));
   offset += sizeof(packet_num);
 
-  if (this->endian == '<') {
+  if (1) {//(this->endian == '<') {
     num_values = bswap_32(num_values);
     sample_rate = bswap_32(sample_rate);
     sample_rate_legacy = bswap_32(sample_rate_legacy);
