@@ -7,7 +7,7 @@ BUILD_OS=()
 BUILD_ARCH=''
 BUILD_SINGLE_ARCH=false
 
-BUILD_OS_DEFAULT=('debian_bookworm')
+BUILD_OS_DEFAULT=('debian_trixie')
 BUILD_ARCH_DEFAULT='linux/arm64'
 
 USE_CACHE=true
