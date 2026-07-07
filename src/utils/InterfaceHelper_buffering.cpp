@@ -12,7 +12,7 @@
 
 // includes from within project
 #include "utils/InterfaceHelper.h"
-
+#include <chrono>
 void *InterfaceHelper::_run_thread_aco_helper(void *ptr) {
 
   InterfaceHelper *argPtr = static_cast<InterfaceHelper *>(ptr);
@@ -38,7 +38,8 @@ void *InterfaceHelper::_run_thread_aco_helper(void *ptr) {
       aco_pkt = argPtr->q_aco->pop();
       initialized = true;
     } else {
-      usleep(10000);
+      //usleep(10000);
+      std::this_thread::sleep_for(std::chrono::microseconds(10000));
     }
   }
 
@@ -121,7 +122,8 @@ void *InterfaceHelper::_run_thread_aco_helper(void *ptr) {
       data_buffer.resize(Eigen::NoChange, 0);
     }
 
-    usleep(1000);
+    //usleep(1000);
+    std::this_thread::sleep_for(std::chrono::microseconds(1000));
   }
   pthread_exit(NULL);
 }
@@ -148,7 +150,8 @@ void *InterfaceHelper::_run_thread_fft_buffer(void *ptr) {
       initialized = true;
 
     } else {
-      usleep(10000);
+      //usleep(10000);
+      std::this_thread::sleep_for(std::chrono::microseconds(10000));
     }
   }
 
@@ -185,7 +188,8 @@ void *InterfaceHelper::_run_thread_fft_buffer(void *ptr) {
                    argPtr->phone_sensitivity_V_uPa;
     }
 
-    usleep(1000);
+    //usleep(1000);
+    std::this_thread::sleep_for(std::chrono::microseconds(1000));
   }
   pthread_exit(NULL);
 }
@@ -210,7 +214,8 @@ void *InterfaceHelper::_run_thread_beamformer_buffer(void *ptr) {
     if (argPtr->q_beam2d->pop(cbf_pkt)) {
       initialized = true;
     } else {
-      usleep(10000);
+      //usleep(10000);
+      std::this_thread::sleep_for(std::chrono::microseconds(10000));
     }
   }
 
@@ -252,7 +257,8 @@ void *InterfaceHelper::_run_thread_beamformer_buffer(void *ptr) {
       data_buffer = cbf_pkt->get_1D();
     }
 
-    usleep(1000);
+    //usleep(1000);
+    std::this_thread::sleep_for(std::chrono::microseconds(1000));
   }
   pthread_exit(NULL);
 }
@@ -283,7 +289,8 @@ void *InterfaceHelper::_run_thread_detections_buffer(void *ptr) {
       detections.clear();
     }
 
-    usleep(1000);
+    //usleep(1000);
+    std::this_thread::sleep_for(std::chrono::microseconds(1000));
   }
   pthread_exit(NULL);
 }
@@ -352,7 +359,8 @@ void *InterfaceHelper::_run_thread_bno_state_buffer(void *ptr) {
               ? new_bnr_frame.header.start_time_nsec
               : argPtr->latest_bno_state.header.start_time_nsec;
     }
-    usleep(1000);
+    //usleep(1000);
+    std::this_thread::sleep_for(std::chrono::microseconds(1000));
   }
   pthread_exit(NULL);
 }

@@ -5,7 +5,7 @@
 // used for logging to audio files -- i.e. WAV, FLAC
 #include <sndfile.h>
 #include <sndfile.hh>
-
+#include <chrono>
 // includes from within project
 #include "utils/LoggerBlock.h"
 
@@ -67,7 +67,8 @@ void LoggerBlock::run_log_thread_audio() {
 
       initialized = true;
     } else {
-      usleep(10000);
+      //usleep(10000);
+      std::this_thread::sleep_for(std::chrono::microseconds(10000));
     }
   }
 
@@ -83,13 +84,15 @@ void LoggerBlock::run_log_thread_audio() {
             this->flac_logger.Log_ACO_Data(aco_data);
           }
         // rest here, to allow for external control switch
-        usleep(10000);
+        //usleep(10000);
+	std::this_thread::sleep_for(std::chrono::microseconds(10000));
       }
     }
      else {
       // if (argPtr->q_aco_dup["csv"]->size() > 0)
       this->q_aco->clear();
-      usleep(100000);
+      //usleep(100000);
+      std::this_thread::sleep_for(std::chrono::microseconds(100000));
      }
   }
 

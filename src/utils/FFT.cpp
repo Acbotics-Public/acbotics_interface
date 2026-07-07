@@ -18,7 +18,7 @@
 #include <vector>
 
 #include "pocketfft_hdronly.h"
-
+#include <chrono>
 // includes from within project
 #include "utils/FFT.h"
 
@@ -183,7 +183,8 @@ void FFT::run_fft_thread()
                 << " samples";
     }
 
-    usleep(1000);
+    //usleep(1000);
+    std::this_thread::sleep_for(std::chrono::microseconds(1000));
   }
 
   this->_is_running = false;

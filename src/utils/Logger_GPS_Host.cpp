@@ -1,6 +1,6 @@
 #include "utils/Logger_GPS_Host.h"
 #include <iomanip>
-
+#include <chrono>
 
   void Logger_GPS_Host_Block::start_logging(){
     this->logging_active=true;
@@ -50,7 +50,8 @@ void Logger_GPS_Host_Block::run_csv_logger_thread() {
         // std::cerr << "No GPSD running.\n";
         // return 1;
         VLOG(3) << "Could not connect to GPSD; service might not be running.";
-        sleep(1);
+        //sleep(1);
+	std::this_thread::sleep_for(std::chrono::seconds(1));
         continue;
       }
 
@@ -125,7 +126,8 @@ void Logger_GPS_Host_Block::run_csv_logger_thread() {
       LOG(INFO) << "Closing file : " << output_filename;
       ofil.close();
     } else {
-      usleep(100000);
+      //usleep(100000);
+      std::this_thread::sleep_for(std::chrono::microseconds(100000));
     }
   }
 

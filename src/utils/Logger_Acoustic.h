@@ -26,6 +26,10 @@ public:
   virtual void set_outdir(std::string logger_outdir);
   virtual void StopFile();
 
+  void set_rollover_min(float min)
+  {
+    this->rollover_min=min;
+  }
 
 protected:
   bool running;

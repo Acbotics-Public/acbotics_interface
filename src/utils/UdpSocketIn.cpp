@@ -16,7 +16,7 @@
 #include <pthread.h>
 #include <sys/socket.h>
 #include <vector>
-
+#include <chrono>
 // includes from within project
 #include "utils/UdpSocketIn.h"
 
@@ -32,7 +32,7 @@ void *UdpSocketIn::_run_socket_thread(void *ptr) {
   argPtr->m_socket = configure_socket(*argPtr);
   int retry_counter = 0;
   while (argPtr->keep_alive && argPtr->m_socket < 0 && retry_counter < 10) {
-    sleep(5);
+    std::this_thread::sleep_for(std::chrono::seconds(5));
     LOG(INFO) << "Retrying socket @ " << pthread_self();
     argPtr->m_socket = configure_socket(*argPtr);
   }
@@ -190,11 +190,12 @@ void UdpSocketIn::stop() {
   this->keep_alive = false;
   if (this->_is_running) {
     // small delay before pthread_tryjoin_np()
-    usleep(1000);
+    //usleep(1000);
+    std::this_thread::sleep_for(std::chrono::microseconds(1000));
     int s;
     if ((s = pthread_tryjoin_np(this->own_thread, NULL)) != 0) {
       VLOG(1) << "(socket port: " << this->port << ") waiting for thread...";
-      sleep(2);
+      std::this_thread::sleep_for(std::chrono::seconds(2));
       if ((s = pthread_tryjoin_np(this->own_thread, NULL)) != 0) {
         VLOG(1) << "(socket port: " << this->port << ") cancelling hanging thread ";
         pthread_cancel(this->own_thread);
@@ -213,7 +214,7 @@ void UdpSocketIn::run_socket_main_thread() {
   this->m_socket = configure_socket(*argPtr);
   int retry_counter = 0;
   while (this->m_socket < 0 && retry_counter < 10) {
-    sleep(5);
+    std::this_thread::sleep_for(std::chrono::seconds(5));
     LOG(INFO) << "Retrying socket (main thread)";
     this->m_socket = configure_socket(*argPtr);
   }

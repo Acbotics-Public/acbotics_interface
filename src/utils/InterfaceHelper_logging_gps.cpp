@@ -11,7 +11,7 @@
 #include <glog/logging.h>
 #include <iomanip>
 #include <pthread.h>
-
+#include <chrono>
 // includes from within project
 #include "utils/InterfaceHelper.h"
 
@@ -106,7 +106,8 @@ void *InterfaceHelper::_run_logger_thread_gps_csv(void *ptr) {
       LOG(INFO) << "Closing file : " << output_filename;
       ofil.close();
     } else {
-      usleep(100000);
+      //usleep(100000);
+      std::this_thread::sleep_for(std::chrono::microseconds(100000));
     }
   }
 

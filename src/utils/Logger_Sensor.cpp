@@ -1,5 +1,5 @@
 #include "utils/Logger_Sensor.h"
-
+#include <chrono>
 
   void Logger_Sensor_Block::start_logging(){
     this->logging_active=true;
@@ -85,12 +85,14 @@ template <typename T, LOGGER L> void Logger_Sensor_Block::run_csv_logger_thread(
             }
         }
         // rest here, to allow for external control switch
-        usleep(10000);
+        //usleep(10000);
+	std::this_thread::sleep_for(std::chrono::microseconds(10000));
       }
       LOG(INFO) << "Closing file : " << this->output_filename[L];
       ofil.close();
     } else {
-      usleep(100000);
+      //usleep(100000);
+      std::this_thread::sleep_for(std::chrono::microseconds(100000));
     } 
   }
 }

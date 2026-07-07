@@ -17,7 +17,7 @@
 
 // includes from within project
 #include "utils/InterfaceHelper.h"
-
+#include <chrono>
 void *InterfaceHelper::_run_logger_thread_audio_csv(void *ptr) {
 
   InterfaceHelper *argPtr = static_cast<InterfaceHelper *>(ptr);
@@ -51,7 +51,8 @@ void *InterfaceHelper::_run_logger_thread_audio_csv(void *ptr) {
       csv_header << num_channels - 1;
       initialized = true;
     } else {
-      usleep(10000);
+      //usleep(10000);
+      std::this_thread::sleep_for(std::chrono::microseconds(10000));
     }
   }
 
@@ -94,14 +95,16 @@ void *InterfaceHelper::_run_logger_thread_audio_csv(void *ptr) {
           }
         }
         // rest here, to allow for external control switch
-        usleep(10000);
+        //usleep(10000);
+	std::this_thread::sleep_for(std::chrono::microseconds(10000));
       }
       LOG(INFO) << "Closing file : " << output_filename;
       ofil.close();
     } else {
       // if (argPtr->q_aco_dup["csv"]->size() > 0)
       argPtr->q_aco_dup["csv"]->clear();
-      usleep(100000);
+      //usleep(100000);
+      std::this_thread::sleep_for(std::chrono::microseconds(100000));
     }
   }
 
@@ -154,7 +157,8 @@ void *InterfaceHelper::_run_logger_thread_audio_flac(void *ptr) {
       }
       initialized = true;
     } else {
-      usleep(10000);
+      //usleep(10000);
+      std::this_thread::sleep_for(std::chrono::microseconds(10000));
     }
   }
 
@@ -194,7 +198,8 @@ void *InterfaceHelper::_run_logger_thread_audio_flac(void *ptr) {
           }
         }
         // rest here, to allow for external control switch
-        usleep(10000);
+        //usleep(10000);
+	std::this_thread::sleep_for(std::chrono::microseconds(10000));
       }
 
       for (int ff = 0; ff < num_files; ff++) {
@@ -206,7 +211,8 @@ void *InterfaceHelper::_run_logger_thread_audio_flac(void *ptr) {
     } else {
       // if (argPtr->q_aco_dup["flac"]->size() > 0)
       argPtr->q_aco_dup["flac"]->clear();
-      usleep(100000);
+      //usleep(100000);
+      std::this_thread::sleep_for(std::chrono::microseconds(100000));
     }
   }
 
@@ -242,7 +248,8 @@ void *InterfaceHelper::_run_logger_thread_audio_wav(void *ptr) {
       sample_rate = int(aco_data->header.sample_rate);
       initialized = true;
     } else {
-      usleep(10000);
+      //usleep(10000);
+      std::this_thread::sleep_for(std::chrono::microseconds(10000));
     }
   }
 
@@ -271,7 +278,8 @@ void *InterfaceHelper::_run_logger_thread_audio_wav(void *ptr) {
           ofil.writef(buffer, aco_data->data.cols());
         }
         // rest here, to allow for external control switch
-        usleep(10000);
+        //usleep(10000);
+	std::this_thread::sleep_for(std::chrono::microseconds(10000));
       }
 
       ofil.writeSync();
@@ -280,7 +288,8 @@ void *InterfaceHelper::_run_logger_thread_audio_wav(void *ptr) {
     } else {
       // if (argPtr->q_aco_dup["wav"]->size() > 0)
       argPtr->q_aco_dup["wav"]->clear();
-      usleep(100000);
+      // usleep(100000);
+      std::this_thread::sleep_for(std::chrono::microseconds(100000));
     }
   }
 

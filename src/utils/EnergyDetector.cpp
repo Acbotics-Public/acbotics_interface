@@ -8,7 +8,7 @@
 /*******************************************************************/
 
 #include <glog/logging.h>
-
+#include <chrono>
 // includes from within project
 #include "utils/EnergyDetector.h"
 
@@ -46,7 +46,8 @@ void *EnergyDetector::_run_detector_thread(void *ptr) {
   bool initialized = false;
 
   while (argPtr->sample_rate <= 0 && argPtr->keep_alive) {
-    usleep(100000);
+    //usleep(100000);
+    std::this_thread::sleep_for(std::chrono::microseconds(100000));
   }
 
   while (argPtr->keep_alive && !initialized) {
@@ -55,7 +56,8 @@ void *EnergyDetector::_run_detector_thread(void *ptr) {
       argPtr->_rx_runtime_update = true;
       initialized = true;
     } else {
-      usleep(10000);
+      //usleep(10000);
+      std::this_thread::sleep_for(std::chrono::microseconds(10000));
     }
   }
 
@@ -102,7 +104,8 @@ void *EnergyDetector::_run_detector_thread(void *ptr) {
         }
       }
     }
-    usleep(1000);
+    //usleep(1000);
+    std::this_thread::sleep_for(std::chrono::microseconds(1000));
   }
 
   argPtr->_is_running = false;
