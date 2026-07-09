@@ -15,6 +15,7 @@ void Logger_Sensor_Block::set_outdir(std::string logger_outdir)
 }
 
 
+
 void Logger_Sensor_Block::run()
 {
     pthread_t _thread;
@@ -118,15 +119,21 @@ std::vector<std::string> Logger_Sensor_Block::get_current_paths(void)
   return vec;
 }
 
+void Logger_Sensor_Block::set_rollover_min(float min)
+{
+  this->rollover_min[LOGGER::GPS] = min;
+  this->rollover_min[LOGGER::PTS] = min;
+  this->rollover_min[LOGGER::EPT] = min;
+  this->rollover_min[LOGGER::IMU] = min;
+  this->rollover_min[LOGGER::RTC] = min;
+  this->rollover_min[LOGGER::BNO] = min;
+  this->rollover_min[LOGGER::BNR] = min;
+
+}
+
 
 Logger_Sensor_Block::Logger_Sensor_Block()
 {
-    this->rollover_min[LOGGER::GPS] = 60;
-    this->rollover_min[LOGGER::PTS] = 60;
-    this->rollover_min[LOGGER::EPT] = 60;
-    this->rollover_min[LOGGER::IMU] = 60;
-    this->rollover_min[LOGGER::RTC] = 60;
-    this->rollover_min[LOGGER::BNO] = 60;
-    this->rollover_min[LOGGER::BNR] = 60;
+    this->set_rollover_min(60);
     this->logger_outdir = "/TMP/";
 }

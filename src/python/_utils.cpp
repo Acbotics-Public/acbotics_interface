@@ -262,6 +262,8 @@ void _utils(py::module_ &m) {
       .def("get_input_queue", py::overload_cast<>(&LoggerBlock::get_input_queue)
            )
       .def("set_outdir", &LoggerBlock::set_outdir, py::arg("outdir"))
+      .def("set_rollover_min", &LoggerBlock::set_rollover_min, py::arg("min"))
+
       // .def("enable_logger", &LoggerBlock::enable_logger, py::arg("logger"), py::arg("enable"))
       .def("start_logging", &LoggerBlock::start_logging)
       .def("stop_logging", &LoggerBlock::stop_logging)
@@ -280,6 +282,7 @@ void _utils(py::module_ &m) {
       //      })
       .def("set_outdir", &Logger_Sensor_Block::set_outdir, py::arg("outdir"))
       // .def("enable_logger", &LoggerBlock::enable_logger, py::arg("logger"), py::arg("enable"))
+      .def("set_rollover_min", &Logger_Sensor_Block::set_rollover_min, py::arg("min"))
       .def("start_logging", &Logger_Sensor_Block::start_logging)
       .def("stop_logging", &Logger_Sensor_Block::stop_logging)
       .def("run", &Logger_Sensor_Block::run)

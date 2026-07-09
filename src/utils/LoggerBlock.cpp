@@ -30,6 +30,10 @@ void LoggerBlock::set_outdir(std::string logger_outdir)
 // this->wav_logger.set_outdir(logger_outdir);
 // this->flac_logger.set_outdir(logger_outdir);
 }
+void LoggerBlock::set_rollover_min(float min)
+{
+  this->csv_logger.set_rollover_min(min);
+}
 
 void LoggerBlock::start_logging(){
 {

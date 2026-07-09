@@ -19,6 +19,7 @@ public:
   void start_logging();
   void stop_logging();
   void run() override;
+  void set_rollover_min(float min);
 
   virtual void set_outdir(std::string logger_outdir);
   template <typename T, LOGGER L> static void *_run_csv_logger_thread(void *ptr);
