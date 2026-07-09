@@ -16,7 +16,7 @@
 #include <pthread.h>
 #include <sys/socket.h>
 #include <vector>
-
+#include <chrono>
 // includes from within project
 #include "utils/UdpSocketIn.h"
 
@@ -32,7 +32,7 @@ void *UdpSocketIn::_run_socket_thread(void *ptr) {
   argPtr->m_socket = configure_socket(*argPtr);
   int retry_counter = 0;
   while (argPtr->keep_alive && argPtr->m_socket < 0 && retry_counter < 10) {
-    sleep(5);
+    std::this_thread::sleep_for(std::chrono::seconds(5));
     LOG(INFO) << "Retrying socket @ " << pthread_self();
     argPtr->m_socket = configure_socket(*argPtr);
   }
@@ -104,6 +104,11 @@ void *UdpSocketIn::_run_socket_thread(void *ptr) {
         for (auto q_aco : argPtr->v_q_aco) {
           q_aco->push(aco_data);
         }
+        for (auto out_queue: argPtr->v_out_queue)
+        {
+          out_queue->push(aco_data);
+        }
+
       }
 
       break;
@@ -167,9 +172,15 @@ void *UdpSocketIn::_run_socket_thread(void *ptr) {
   argPtr->_is_running = false;
   pthread_exit(NULL);
 }
+void UdpSocketIn::run() {
+  LOG(WARNING) << ("Running UdpSocketIn");
+  this->run_socket_thread();
+}
 
 void UdpSocketIn::run_socket_thread() {
   pthread_t thread;
+  LOG(WARNING) << ("Running UdpSocketIn Thread");
+
   pthread_create(&thread, NULL, _run_socket_thread, this);
   this->own_thread = thread;
 }
@@ -179,11 +190,12 @@ void UdpSocketIn::stop() {
   this->keep_alive = false;
   if (this->_is_running) {
     // small delay before pthread_tryjoin_np()
-    usleep(1000);
+    //usleep(1000);
+    std::this_thread::sleep_for(std::chrono::microseconds(1000));
     int s;
     if ((s = pthread_tryjoin_np(this->own_thread, NULL)) != 0) {
       VLOG(1) << "(socket port: " << this->port << ") waiting for thread...";
-      sleep(2);
+      std::this_thread::sleep_for(std::chrono::seconds(2));
       if ((s = pthread_tryjoin_np(this->own_thread, NULL)) != 0) {
         VLOG(1) << "(socket port: " << this->port << ") cancelling hanging thread ";
         pthread_cancel(this->own_thread);
@@ -202,7 +214,7 @@ void UdpSocketIn::run_socket_main_thread() {
   this->m_socket = configure_socket(*argPtr);
   int retry_counter = 0;
   while (this->m_socket < 0 && retry_counter < 10) {
-    sleep(5);
+    std::this_thread::sleep_for(std::chrono::seconds(5));
     LOG(INFO) << "Retrying socket (main thread)";
     this->m_socket = configure_socket(*argPtr);
   }
@@ -228,6 +240,10 @@ void UdpSocketIn::run_socket_main_thread() {
                             << aco_data->header.packet_num;
       for (auto q_aco : argPtr->v_q_aco) {
         q_aco->push(aco_data);
+      }
+      for (auto out_queue: argPtr->v_out_queue)
+      {
+        out_queue->push(aco_data);
       }
     }
   }
@@ -335,6 +351,14 @@ int UdpSocketIn::configure_socket(UdpSocketIn &args) {
   return sock;
 }
 
+void UdpSocketIn::register_client_aco(std::shared_ptr<tsQueue<std::shared_ptr<UdpAcousticData>>> q_aco)
+{
+  this->v_out_queue.push_back(q_aco);
+
+}
+
+
+
 void UdpSocketIn::register_client(QueueClient &client) {
   LOG(INFO) << "Registering " << client.get_name();
 
@@ -394,6 +418,39 @@ void UdpSocketIn::register_client(QueueClient &client) {
     LOG(WARNING) << "Cannot register RTC data queue; received nullptr!";
   }
 }
+
+void UdpSocketIn::register_client_ept(std::shared_ptr<tsQueue<std::shared_ptr<UdpEptData>>> q_ept) {
+    v_q_ept.push_back(q_ept);
+}
+
+void UdpSocketIn::register_client_rtc(std::shared_ptr<tsQueue<std::shared_ptr<UdpRtcData>>> q_rtc) {
+    v_q_rtc.push_back(q_rtc);
+}
+
+void UdpSocketIn::register_client_bnr(std::shared_ptr<tsQueue<std::shared_ptr<UdpBnrData>>> q_bnr) {
+    v_q_bnr.push_back(q_bnr);
+}
+
+void UdpSocketIn::register_client_bno(std::shared_ptr<tsQueue<std::shared_ptr<UdpBnoData>>> q_bno) {
+    v_q_bno.push_back(q_bno);
+}
+
+void UdpSocketIn::register_client_imu(std::shared_ptr<tsQueue<std::shared_ptr<UdpImuData>>> q_imu) {
+    v_q_imu.push_back(q_imu);
+}
+
+void UdpSocketIn::register_client_pts(std::shared_ptr<tsQueue<std::shared_ptr<UdpPtsData>>> q_pts) {
+    v_q_pts.push_back(q_pts);
+}
+
+void UdpSocketIn::register_client_beamraw(std::shared_ptr<tsQueue<std::shared_ptr<UdpBeamformRaw>>> q_beamraw) {
+    v_q_beamraw.push_back(q_beamraw);
+}
+void UdpSocketIn::register_client_beam2d(std::shared_ptr<tsQueue<std::shared_ptr<UdpBeamform2D>>> q_beam2d) {
+    v_q_beam2d.push_back(q_beam2d);
+}
+
+
 
 bool UdpSocketIn::is_connected() { return this->m_socket > 0; }
 

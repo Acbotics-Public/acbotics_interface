@@ -9,6 +9,7 @@
 
 #include <gflags/gflags.h>
 #include <glog/logging.h>
+#include <chrono>
 
 #include "utils/InterfaceHelper.h"
 
@@ -46,7 +47,8 @@ int main(int argc, char *argv[]) {
   UdpPtsData pts;
   bool _new_data = false;
   while (true) {
-    sleep(1);
+    //sleep(1);
+    std::this_thread::sleep_for(std::chrono::seconds(1));
   }
 
   return 0;

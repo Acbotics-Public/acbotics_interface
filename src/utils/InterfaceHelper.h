@@ -23,7 +23,7 @@
 #include "utils/UdpSocketIn.h"
 
 #include "ipc_protocols/IpcBnoState.h"
-
+#include <chrono>
 DECLARE_bool(debug_interface_helper);
 
 class InterfaceHelper : virtual public QueueClient {
@@ -284,14 +284,16 @@ template <typename T, LOGGER L> void *InterfaceHelper::_run_csv_logger_thread(vo
           ofil.flush();
         }
         // rest here, to allow for external control switch
-        usleep(10000);
+        //usleep(10000);
+	std::this_thread::sleep_for(std::chrono::microseconds(10000));
       }
       LOG(INFO) << "Closing file : " << output_filename;
       ofil.close();
     } else {
       if (queue->size() > 0)
         argPtr->latest_data[L] = queue->pop_all().back();
-      usleep(100000);
+      //usleep(100000);
+      std::this_thread::sleep_for(std::chrono::microseconds(100000));
     }
   }
 

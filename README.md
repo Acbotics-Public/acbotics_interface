@@ -34,6 +34,9 @@ The `build.sh` script can be used to compile the package for the host architectu
 - libgps-dev
 - libeigen3-dev
 
+## Cross Compiling
+
+
 Cross-compilation is available via Docker buildx, using the `build_docker.sh` script. This will place the compiled output in the appropriate subdirectories by OS (Ubuntu, Debian) and architecture (arm64, armv8, amd64). QEMU may be required for cross-compilation; if not already installed, add the following packages to your host system:
 
 - qemu-user-static

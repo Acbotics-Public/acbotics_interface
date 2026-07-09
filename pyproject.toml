@@ -1,0 +1,29 @@
+[build-system]
+requires = ["scikit-build-core", "pybind11"]
+build-backend = "scikit_build_core.build"
+
+[tool.cibuildwheel]
+archs = ["x86_64", "aarch64"]
+
+# Skip Alpine Linux (musl) builds, as all target systems use glibc
+skip = "*-musllinux_*"	
+
+# Force the use of the AlmaLinux 9 (glibc 2.34) build environments
+manylinux-x86_64-image = "manylinux_2_34"
+manylinux-aarch64-image = "manylinux_2_34"
+
+# Install EPEL repository, then install modern gpsd-devel
+before-all = "dnf install -y epel-release && dnf --enablerepo=crb install -y gpsd-devel"
+
+[project]
+name = "acbotics_interface"
+version = "2.0.0"
+description = "Acbotics AcSense Interface Library"
+requires-python = ">=3.8"
+dependencies = [
+    "numpy", # Add any pure python dependencies here
+]
+
+[tool.scikit-build]
+cmake.args = ["-DCMAKE_POLICY_VERSION_MINIMUM=3.5"]
+wheel.expand-macos-universal-tags = true

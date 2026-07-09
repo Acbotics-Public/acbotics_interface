@@ -45,4 +45,5 @@ void _acsense_types(py::module_ &m) {
       .value("RTC", QUEUE::RTC)
       .value("BNO", QUEUE::BNO)
       .value("BNR", QUEUE::BNR);
+
 }

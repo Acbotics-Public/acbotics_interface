@@ -25,6 +25,14 @@ public:
     this->thread_name = "detector_thr";
     this->phone_sensitivity_V_uPa = -167;
   };
+  std::shared_ptr<tsQueue<std::shared_ptr<IpcFFT>>>get_input_queue()
+  {
+    return this->q_fft;
+  };
+  static std::shared_ptr<EnergyDetector> create()
+  {
+    return std::make_shared<EnergyDetector>();
+  }
 
   void run();
   void register_client(QueueClient &client);

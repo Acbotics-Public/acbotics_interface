@@ -71,7 +71,7 @@ void UdpAcousticData::Header::decode(std::vector<int8_t> &buff) {
   std::memcpy(&packet_num, buff_raw + offset, sizeof(packet_num));
   offset += sizeof(packet_num);
 
-  if (this->endian == '<') {
+  if (1) {//(this->endian == '<') {
     num_values = bswap_32(num_values);
     sample_rate = bswap_32(sample_rate);
     sample_rate_legacy = bswap_32(sample_rate_legacy);
@@ -133,6 +133,39 @@ UdpAcousticData::UdpAcousticData(std::vector<int8_t> &buff) {
     log_invalid_buffer(buff_start);
   }
 }
+
+UdpAcousticData::UdpAcousticData(  Eigen::MatrixX<int16_t> data,
+                    int8_t num_channels,
+                    int32_t num_values,
+                    float sample_rate,
+                    int64_t start_time_ns,
+                    uint64_t tick_time_ns,
+                    int32_t adc_count,
+                    int32_t packet_num
+){// used for python injection
+      this->header.id[0] = 'A';
+      this->header.id[1] = 'C';
+      this->header.ver_maj = 4;
+      this->header.ver_min = 1;
+      this->header.endian = '<';
+
+      this->header.num_channels = num_channels;
+      this->header.data_size_bits = 16;
+      this->header.num_values = num_values;
+
+      this->header.sample_rate = sample_rate;
+      this->header.start_time_nsec = start_time_ns;
+      this->header.tick_time_nsec = tick_time_ns;
+
+      this->header.adc_count = adc_count;
+      this->header.scale = 1;
+
+      this->header.packet_num = packet_num;
+
+      this->data = data;
+
+}
+
 
 bool UdpAcousticData::unpack_data(std::vector<int8_t> &buff) {
   size_t _v4_correction = this->header.ver_maj >= 4 ? 0 : sizeof(Header::tick_time_nsec);

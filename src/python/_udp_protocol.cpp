@@ -50,14 +50,37 @@ void _udp_protocol(py::module_ &m) {
       .def_readonly("id", &UdpData::Header::id)
       .def_readonly("num_bytes", &UdpData::Header::num_bytes);
 
-  py::class_<UdpAcousticData>(m, "UdpAcousticData")
+  py::class_<UdpAcousticData, std::shared_ptr<UdpAcousticData>>(m, "UdpAcousticData")
+      .def_readonly("header", &UdpAcousticData::header)
+      .def_static("create",py::overload_cast<Eigen::MatrixX<int16_t>,
+                    int8_t,
+                    int32_t,
+                    float,
+                    int64_t ,
+                    uint64_t ,
+                    int32_t ,
+                    int32_t >
+                    (&UdpAcousticData::create
+      ),                    
+                    py::arg("data"),
+                    py::arg("  "),
+                    py::arg("num_values"), 
+                    py::arg("sample_rate"),
+                    py::arg("start_time_ns"), 
+                    py::arg("tick_time_ns"),
+                    py::arg("adc_count"), 
+                    py::arg("packet_num")
+)
+      .def("viewData", &UdpAcousticData::viewData, py::return_value_policy::reference_internal)
       .def("__repr__",
            [](const UdpAcousticData &hh) {
              std::ostringstream oss;
              oss << hh;
              return oss.str();
            })
-      .def_readonly("header", &UdpAcousticData::header);
+
+      ;
+
 
   py::class_<UdpAcousticData::Header>(m, "UdpAcousticData_Header")
       .def("__repr__",
@@ -69,6 +92,9 @@ void _udp_protocol(py::module_ &m) {
       .def_readonly("num_channels", &UdpAcousticData::Header ::num_channels)
       .def_readonly("sample_rate", &UdpAcousticData::Header ::sample_rate)
       .def_readonly("tick_time_nsec", &UdpAcousticData::Header::tick_time_nsec)
+      .def_readonly("start_time_nsec", &UdpAcousticData::Header::start_time_nsec)
+      .def_readonly("adc_count", &UdpAcousticData::Header::adc_count)
+      .def_readonly("packet_num", &UdpAcousticData::Header::packet_num)
 
       // FIXME : remove getters get_num_channels(), get_sample_rate()
       .def("get_num_channels", [](const UdpAcousticData::Header &hh) { return hh.num_channels; })
@@ -80,7 +106,7 @@ void _udp_protocol(py::module_ &m) {
         return os.str();
       });
 
-  py::class_<UdpPtsData>(m, "UdpPtsData")
+  py::class_<UdpPtsData, std::shared_ptr<UdpPtsData>>(m, "UdpPtsData")
       .def("__repr__",
            [](const UdpPtsData &st) {
              std::ostringstream oss;
@@ -91,7 +117,7 @@ void _udp_protocol(py::module_ &m) {
       .def_readonly("pressure_mbar", &UdpPtsData::pressure_mbar)
       .def_readonly("temperature_c", &UdpPtsData::temperature_c);
 
-  py::class_<UdpImuData>(m, "UdpImuData")
+  py::class_<UdpImuData, std::shared_ptr<UdpImuData>>(m, "UdpImuData")
       .def("__repr__",
            [](const UdpImuData &st) {
              std::ostringstream oss;
@@ -108,7 +134,13 @@ void _udp_protocol(py::module_ &m) {
       .def_readonly("gyro_y", &UdpImuData::gyro_y)
       .def_readonly("gyro_z", &UdpImuData::gyro_z);
 
-  py::class_<UdpBnoData>(m, "UdpBnoData")
+  py::enum_<BNO_TYPE>(m,"BNO_TYPE")
+      .value("UNKNOWN", BNO_TYPE::UNKNOWN)
+      .value("ACCEL", BNO_TYPE::ACCEL)
+      .value("GYRO", BNO_TYPE::GYRO)
+      .value("MAG", BNO_TYPE::MAG);
+
+  py::class_<UdpBnoData, std::shared_ptr<UdpBnoData>>(m, "UdpBnoData")
       .def("__repr__",
            [](const UdpBnoData &st) {
              std::ostringstream oss;
@@ -122,7 +154,7 @@ void _udp_protocol(py::module_ &m) {
       .def_readonly("sense_y", &UdpBnoData::sense_y)
       .def_readonly("sense_z", &UdpBnoData::sense_z);
 
-  py::class_<UdpBnrData>(m, "UdpBnrData")
+  py::class_<UdpBnrData, std::shared_ptr<UdpBnrData>>(m, "UdpBnrData")
       .def("__repr__",
            [](const UdpBnrData &st) {
              std::ostringstream oss;
@@ -137,7 +169,7 @@ void _udp_protocol(py::module_ &m) {
       .def_readonly("quat_k", &UdpBnrData::quat_k)
       .def_readonly("quat_r", &UdpBnrData::quat_r);
 
-  py::class_<UdpEptData>(m, "UdpEptData")
+  py::class_<UdpEptData, std::shared_ptr<UdpEptData>>(m, "UdpEptData")
       .def("__repr__",
            [](const UdpEptData &st) {
              std::ostringstream oss;
@@ -148,7 +180,7 @@ void _udp_protocol(py::module_ &m) {
       .def_readonly("pressure_mbar", &UdpEptData::pressure_mbar)
       .def_readonly("temperature_c", &UdpEptData::temperature_c);
 
-  py::class_<UdpRtcData>(m, "UdpRtcData")
+  py::class_<UdpRtcData, std::shared_ptr<UdpRtcData>>(m, "UdpRtcData")
       .def("__repr__",
            [](const UdpRtcData &st) {
              std::ostringstream oss;

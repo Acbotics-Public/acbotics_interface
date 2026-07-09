@@ -32,13 +32,17 @@ public:
     // Use non-zero default limit to constrain growth when queue is populated but not read.
     // A max length value of 0 allows unbounded growth.
     this->m_length = 1000;
-    this->show_warning = true;
+    this->show_warning = false;
   }
   tsQueue(size_t max_length) : tsQueue() { this->m_length = max_length; }
 
   void set_queue_length(size_t max_length) { this->m_length = max_length; }
   void warn_dropped_data(bool show_warning) { this->show_warning = show_warning; }
 
+  static std::shared_ptr<tsQueue<T>> create()
+  {
+    return std::make_shared<tsQueue<T>>();
+  }
   // Insert items
   // ============
   void push(T item) {
@@ -46,7 +50,10 @@ public:
     m_queue.push(item);
     if (m_length > 0 && m_queue.size() > m_length) {
       if (this->show_warning)
+      {
         LOG(WARNING) << "Queue at max length of " << m_length << " items; dropping oldest item";
+        LOG(WARNING) << typeid(T).name();
+      }
       m_queue.pop();
     }
     m_cond.notify_one();
@@ -58,6 +65,12 @@ public:
       m_queue.push(item_vec.at(ii));
     }
     while (m_length > 0 && m_queue.size() > m_length) {
+      if (this->show_warning)
+      {
+        LOG(WARNING) << "Queue at max length of " << m_length << " items; dropping oldest item";
+        LOG(WARNING) << typeid(T).name();
+
+      }
       m_queue.pop();
     }
     m_cond.notify_one();

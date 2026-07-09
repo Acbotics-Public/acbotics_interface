@@ -11,7 +11,7 @@
 #define types_HEADER
 
 #include <unordered_map>
-
+#include <string>
 enum class QUEUE { UNKNOWN, ACO, FFT, CBF, GPS, PTS, IMU, EPT, RTC, BNO, BNR, DETECT };
 
 enum class LOGGER { UNKNOWN, ACO_CSV, ACO_FLAC, ACO_WAV, GPS, PTS, IMU, EPT, RTC, BNO, BNR };

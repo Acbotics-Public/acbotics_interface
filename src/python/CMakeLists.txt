@@ -59,5 +59,5 @@ target_link_libraries(acbotics_interface_py PRIVATE acbotics_interface glog::glo
 
 install(TARGETS
     acbotics_interface_py
-    LIBRARY DESTINATION ${PYTHON_SITE}
+    LIBRARY DESTINATION .
     CONFIGURATIONS Release)

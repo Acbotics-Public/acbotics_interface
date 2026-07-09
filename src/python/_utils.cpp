@@ -14,6 +14,9 @@
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <pybind11/functional.h>
+#include <pybind11/complex.h>
+#include <pybind11/chrono.h>
 
 #include <Eigen/Dense>
 #include <variant>
@@ -23,17 +26,112 @@
 #include "utils/UdpSocketIn.h"
 
 #include "ipc_protocols/IpcBnoState.h"
+#include "utils/LoggerBlock.h"
+#include "utils/Logger_Sensor.h"
+#include "utils/Logger_GPS_Host.h"
 
 namespace py = pybind11;
 
 void _utils(py::module_ &m) {
+  // py::class_<tsQueue<UdpAcousticData>>  (m, "Q_ACO")
+  //   .def(py::init<>())
+  //   .def("pop", [](tsQueue<UdpAcousticData> &qaco) {return qaco.pop();})
+  //   .def("push", [](tsQueue<UdpAcousticData> &qaco, UdpAcousticData data_frame) {return qaco.push(data_frame);})
+  //   .def("size", [](tsQueue<UdpAcousticData> &qaco) {return qaco.size();})
+  // ;
+  py::class_<tsQueue<std::shared_ptr<UdpAcousticData>>, std::shared_ptr<tsQueue<std::shared_ptr<UdpAcousticData>>>>  (m, "Q_ACO")
+    // .def(py::init<>(), py::return_value_policy::take_ownership)
+    .def("pop", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpAcousticData>>> &qaco) {return qaco->pop();})
+    .def("push", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpAcousticData>>> &qaco, std::shared_ptr<UdpAcousticData> data_frame) {return qaco->push(data_frame);})
+    .def("size", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpAcousticData>>> &qaco) {return qaco->size();})
+    .def_static("create",py::overload_cast<>(
+       &tsQueue<std::shared_ptr<UdpAcousticData>>::create)
+       )  
+    ;
 
-  py::class_<QueueClient>(m, "QueueClient")
+  py::class_<tsQueue<std::shared_ptr<IpcFFT>>, std::shared_ptr<tsQueue<std::shared_ptr<IpcFFT>>>>  (m, "Q_FFT")
+    // .def(py::init<>(), py::return_value_policy::take_ownership)
+    .def("pop", [](std::shared_ptr<tsQueue<std::shared_ptr<IpcFFT>>> &qfft) {return qfft->pop();})
+    .def("push", [](std::shared_ptr<tsQueue<std::shared_ptr<IpcFFT>>> &qfft, std::shared_ptr<IpcFFT> data_frame) {return qfft->push(data_frame);})
+    .def("size", [](std::shared_ptr<tsQueue<std::shared_ptr<IpcFFT>>> &qfft) {return qfft->size();})
+    .def_static("create",py::overload_cast<>(
+       &tsQueue<std::shared_ptr<IpcFFT>>::create)
+       )  
+    ;
+
+  py::class_<tsQueue<std::shared_ptr<UdpPtsData>>, std::shared_ptr<tsQueue<std::shared_ptr<UdpPtsData>>>>  (m, "Q_PTS")
+    // .def(py::init<>(), py::return_value_policy::take_ownership)
+    .def("pop", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpPtsData>>> &qpts) {return qpts->pop();})
+    .def("push", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpPtsData>>> &qpts, std::shared_ptr<UdpPtsData> data_frame) {return qpts->push(data_frame);})
+    .def("size", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpPtsData>>> &qpts) {return qpts->size();})
+    .def_static("create",py::overload_cast<>(
+       &tsQueue<std::shared_ptr<UdpPtsData>>::create)
+       )  
+    ;
+      py::class_<tsQueue<std::shared_ptr<UdpEptData>>, std::shared_ptr<tsQueue<std::shared_ptr<UdpEptData>>>>  (m, "Q_EPT")
+    // .def(py::init<>(), py::return_value_policy::take_ownership)
+    .def("pop", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpEptData>>> &qept) {return qept->pop();})
+    .def("push", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpEptData>>> &qept, std::shared_ptr<UdpEptData> data_frame) {return qept->push(data_frame);})
+    .def("size", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpEptData>>> &qept) {return qept->size();})
+    .def_static("create",py::overload_cast<>(
+       &tsQueue<std::shared_ptr<UdpEptData>>::create)
+       )  
+    ;
+      py::class_<tsQueue<std::shared_ptr<UdpRtcData>>, std::shared_ptr<tsQueue<std::shared_ptr<UdpRtcData>>>>  (m, "Q_RTC")
+    // .def(py::init<>(), py::return_value_policy::take_ownership)
+    .def("pop", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpRtcData>>> &qrtc) {return qrtc->pop();})
+    .def("push", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpRtcData>>> &qrtc, std::shared_ptr<UdpRtcData> data_frame) {return qrtc->push(data_frame);})
+    .def("size", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpRtcData>>> &qrtc) {return qrtc->size();})
+    .def_static("create",py::overload_cast<>(
+       &tsQueue<std::shared_ptr<UdpRtcData>>::create)
+       )  
+    ;
+
+      py::class_<tsQueue<std::shared_ptr<UdpImuData>>, std::shared_ptr<tsQueue<std::shared_ptr<UdpImuData>>>>  (m, "Q_IMU")
+    // .def(py::init<>(), py::return_value_policy::take_ownership)
+    .def("pop", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpImuData>>> &qimu) {return qimu->pop();})
+    .def("push", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpImuData>>> &qimu, std::shared_ptr<UdpImuData> data_frame) {return qimu->push(data_frame);})
+    .def("size", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpImuData>>> &qimu) {return qimu->size();})
+    .def_static("create",py::overload_cast<>(
+       &tsQueue<std::shared_ptr<UdpImuData>>::create)
+       )  
+    ;
+
+      py::class_<tsQueue<std::shared_ptr<UdpBnoData>>, std::shared_ptr<tsQueue<std::shared_ptr<UdpBnoData>>>>  (m, "Q_BNO")
+    // .def(py::init<>(), py::return_value_policy::take_ownership)
+    .def("pop", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpBnoData>>> &qbno) {return qbno->pop();})
+    .def("push", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpBnoData>>> &qbno, std::shared_ptr<UdpBnoData> data_frame) {return qbno->push(data_frame);})
+    .def("size", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpBnoData>>> &qbno) {return qbno->size();})
+    .def_static("create",py::overload_cast<>(
+       &tsQueue<std::shared_ptr<UdpBnoData>>::create)
+       )  
+    ;
+
+
+      py::class_<tsQueue<std::shared_ptr<UdpBnrData>>, std::shared_ptr<tsQueue<std::shared_ptr<UdpBnrData>>>>  (m, "Q_BNR")
+    // .def(py::init<>(), py::return_value_policy::take_ownership)
+    .def("pop", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpBnrData>>> &qbnr) {return qbnr->pop();})
+    .def("push", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpBnrData>>> &qbnr, std::shared_ptr<UdpBnrData> data_frame) {return qbnr->push(data_frame);})
+    .def("size", [](std::shared_ptr<tsQueue<std::shared_ptr<UdpBnrData>>> &qbnr) {return qbnr->size();})
+    .def_static("create",py::overload_cast<>(
+       &tsQueue<std::shared_ptr<UdpBnrData>>::create)
+       )  
+    ;
+
+
+
+  py::class_<QueueClient, std::shared_ptr<QueueClient>>(m, "QueueClient")
       .def(py::init<>())
       .def("run", &QueueClient::run)
       .def("stop", &QueueClient::stop)
       .def("pop_aco", [](QueueClient &sst) { return *sst.q_aco->pop(); })
       .def("pop_fft", [](QueueClient &sst) { return *sst.q_fft->pop(); })
+      .def("pop_bno", [](QueueClient &sst) { return *sst.q_bno->pop(); })
+      .def("pop_bnr", [](QueueClient &sst) { return *sst.q_bnr->pop(); })
+      .def("pop_ept", [](QueueClient &sst) { return *sst.q_ept->pop(); })
+      .def("pop_pts", [](QueueClient &sst) { return *sst.q_pts->pop(); })
+      .def("pop_imu", [](QueueClient &sst) { return *sst.q_imu->pop(); })
+      .def("pop_rtc", [](QueueClient &sst) { return *sst.q_rtc->pop(); })
       .def("pop_beam2d", [](QueueClient &sst) { return *sst.q_beam2d->pop(); })
       .def("pop_detector", [](QueueClient &sst) { return *sst.q_detect->pop(); })
       // .def("pop_detector_all", [](QueueClient &sst) { return sst.q_detect->pop_all(); })
@@ -51,15 +149,36 @@ void _utils(py::module_ &m) {
         case QUEUE::DETECT:
           return sst.q_detect->size();
           break;
-
+        case QUEUE::EPT:
+          return sst.q_ept->size();
+          break;
+        case QUEUE::PTS:
+          return sst.q_pts->size();
+          break;
+        case QUEUE::IMU:
+          return sst.q_imu->size();
+          break;
+        case QUEUE::RTC:
+          return sst.q_rtc->size();
+          break;
+        case QUEUE::BNO:
+          return sst.q_bno->size();
+          break;
+        case QUEUE::BNR:
+          return sst.q_bnr->size();
+          break;
         default:
           return (size_t)0;
           break;
         }
       });
 
-  py::class_<UdpSocketIn>(m, "UdpSocketIn")
+  py::class_<UdpSocketIn, std::shared_ptr<UdpSocketIn>>(m, "UdpSocketIn")
       .def(py::init<>())
+      .def_static("create", py::overload_cast<bool,  std::string, int32_t , std::string>(  
+          &UdpSocketIn::create)
+       )
+
       // .def(py::init<bool, std::string, std::string>())
       .def(py::init<bool, std::string, int32_t, std::string>(), py::arg("use_mcast"),
            py::arg("iface_ip"), py::arg("port"), py::arg("mcast_group"))
@@ -78,21 +197,109 @@ void _utils(py::module_ &m) {
            "Run intake socket in main thread")
       .def("run_socket_thread", &UdpSocketIn::run_socket_thread,
            "Run intake socket in separate thread")
+      .def("run", &UdpSocketIn::run,
+           "Run intake socket in separate thread")
+
       // pybind11 requires explicit typing;
       // cannot just use the parent class as in pure C++
       // instead, the child classes must be declared as acceptable inputs
       // and the order of overload resolution should be accounted for
       .def(
+          "register_client_aco", [](UdpSocketIn &sst, ptr_tsQ<UdpAcousticData> cb) { sst.register_client_aco(cb); },
+          py::arg("client"), "Register client")
+      .def(
+          "register_client_rtc", [](UdpSocketIn &sst, ptr_tsQ<UdpRtcData> cb) { sst.register_client_rtc(cb); },
+          py::arg("client"), "Register client")
+      .def(
+          "register_client_ept", [](UdpSocketIn &sst, ptr_tsQ<UdpEptData> cb) { sst.register_client_ept(cb); },
+          py::arg("client"), "Register client")
+      .def(
+          "register_client_bnr", [](UdpSocketIn &sst, ptr_tsQ<UdpBnrData> cb) { sst.register_client_bnr(cb); },
+          py::arg("client"), "Register client")
+      .def(
+          "register_client_bno", [](UdpSocketIn &sst, ptr_tsQ<UdpBnoData> cb) { sst.register_client_bno(cb); },
+          py::arg("client"), "Register client")
+      .def(
+          "register_client_imu", [](UdpSocketIn &sst, ptr_tsQ<UdpImuData> cb) { sst.register_client_imu(cb); },
+          py::arg("client"), "Register client")
+      .def(
+          "register_client_pts", [](UdpSocketIn &sst, ptr_tsQ<UdpPtsData> cb) { sst.register_client_pts(cb); },
+          py::arg("client"), "Register client")
+      .def(
+          "register_client_beamraw", [](UdpSocketIn &sst, ptr_tsQ<UdpBeamformRaw> cb) { sst.register_client_beamraw(cb); },
+          py::arg("client"), "Register client")
+      .def(
+          "register_client_beam2d", [](UdpSocketIn &sst, ptr_tsQ<UdpBeamform2D> cb) { sst.register_client_beam2d(cb); },
+          py::arg("client"), "Register client")
+      .def(
+          "register_client", [](UdpSocketIn &sst, QueueClient &client) { sst.register_client(client); },
+          py::arg("client"), "Register client")
+      .def(
           "register_client", [](UdpSocketIn &sst, FFT &cst) { sst.register_client(cst); },
+          py::arg("client"), "Register client")
+      .def(
+          "register_client", [](UdpSocketIn &sst, LoggerBlock &cst) { sst.register_client(cst); },
+          py::arg("client"), "Register client")
+      .def(
+          "register_client", [](UdpSocketIn &sst, Logger_Sensor_Block &cst) { sst.register_client(cst); },
           py::arg("client"), "Register client")
       .def(
           "register_client",
           [](UdpSocketIn &sst, InterfaceHelper &cst) { sst.register_client(cst); },
-          py::arg("client"), "Register client")
+          py::arg("client"), "Register client");
       // Per overload resolution order, we register the generic QueueClient form as the last choice
-      .def("register_client", &UdpSocketIn::register_client, py::arg("client"), "Register client");
+      //.def("register_client", &UdpSocketIn::register_client, py::arg("client"), "Register client");
 
-  py::class_<FreqDomainBase, QueueClient>(m, "FreqDomainBase")
+  py::class_<LoggerBlock>(m, "LoggerBlock")
+      .def(py::init<>())
+      // .def(py::init<bool, std::string, std::string>())
+      // .def("__repr__",
+      //      [](const LoggerBlock &st) {
+      //        std::ostringstream oss;
+      //        oss << st;
+      //        return oss.str();
+      //      })
+      .def("get_input_queue", py::overload_cast<>(&LoggerBlock::get_input_queue)
+           )
+      .def("set_outdir", &LoggerBlock::set_outdir, py::arg("outdir"))
+      .def("set_rollover_min", &LoggerBlock::set_rollover_min, py::arg("min"))
+
+      // .def("enable_logger", &LoggerBlock::enable_logger, py::arg("logger"), py::arg("enable"))
+      .def("start_logging", &LoggerBlock::start_logging)
+      .def("stop_logging", &LoggerBlock::stop_logging)
+      .def("get_current_paths", &LoggerBlock::get_current_paths)
+      
+      .def("run", &LoggerBlock::run);
+
+  py::class_<Logger_Sensor_Block>(m, "Logger_Sensor_Block")
+      .def(py::init<>())
+      // .def(py::init<bool, std::string, std::string>())
+      // .def("__repr__",
+      //      [](const LoggerBlock &st) {
+      //        std::ostringstream oss;
+      //        oss << st;
+      //        return oss.str();
+      //      })
+      .def("set_outdir", &Logger_Sensor_Block::set_outdir, py::arg("outdir"))
+      // .def("enable_logger", &LoggerBlock::enable_logger, py::arg("logger"), py::arg("enable"))
+      .def("set_rollover_min", &Logger_Sensor_Block::set_rollover_min, py::arg("min"))
+      .def("start_logging", &Logger_Sensor_Block::start_logging)
+      .def("stop_logging", &Logger_Sensor_Block::stop_logging)
+      .def("run", &Logger_Sensor_Block::run)
+      .def("get_current_paths", &Logger_Sensor_Block::get_current_paths)
+      
+        ;
+  py::class_<Logger_GPS_Host_Block>(m, "Logger_GPS_Host_Block")
+      .def(py::init<>())
+      .def("set_outdir", &Logger_GPS_Host_Block::set_outdir, py::arg("outdir"))
+      .def("start_logging", &Logger_GPS_Host_Block::start_logging)
+      .def("stop_logging", &Logger_GPS_Host_Block::stop_logging)
+      .def("run", &Logger_GPS_Host_Block::run)
+      .def("get_current_paths", &Logger_GPS_Host_Block::get_current_paths)
+      
+        ;
+
+  py::class_<FreqDomainBase, QueueClient, std::shared_ptr<FreqDomainBase>>(m, "FreqDomainBase")
       .def(py::init<>())
       .def("set_sample_rate", &FreqDomainBase::set_sample_rate, py::arg("sample_rate"))
       .def("set_NFFT", &FreqDomainBase::set_NFFT, py::arg("NFFT"))
@@ -126,24 +333,38 @@ void _utils(py::module_ &m) {
           py::arg("start_time_nsec"), py::arg("time_series"),
           "Add time-series data to acoustic queue");
 
-  py::class_<FFT, FreqDomainBase, QueueClient>(m, "FFT")
-      .def(py::init<>())
+  py::class_<FFT, FreqDomainBase, std::shared_ptr<FFT>>(m, "FFT")
+      //.def(py::init<>())
       .def(
-          "register_client", [](FFT &sst, EnergyDetector &cst) { sst.register_client(cst); },
+          "register_client", [](FFT &sst, std::shared_ptr<tsQueue<std::shared_ptr<IpcFFT>>> cst) { sst.register_client(cst); },
           py::arg("client"), "Register client")
-      .def("register_client", &FFT::register_client, py::arg("client"), "Register client")
-
+      // .def(
+      //     "register_client", [](FFT &sst, EnergyDetector &cst) { sst.register_client(cst); },
+      //     py::arg("client"), "Register client")
+      // .def("register_client", &FFT::register_client, py::arg("client"), "Register client")
+      .def("get_input_queue", py::overload_cast<>(&FFT::get_input_queue)
+           )
       .def("set_channel_filter", py::overload_cast<int>(&FFT::set_channel_filter),
            py::arg("num_ch"))
       .def("set_channel_filter", py::overload_cast<std::vector<int>>(&FFT::set_channel_filter),
-           py::arg("ch_filter"));
+           py::arg("ch_filter"))
+      .def("run", &FFT::run)
 
-  py::class_<EnergyDetector, FreqDomainBase, QueueClient>(m, "EnergyDetector")
-      .def(py::init<>())
+      .def_static("create", py::overload_cast<>(  
+          &FFT::create)
+       ) 
+      ;
+  py::class_<EnergyDetector, FreqDomainBase, QueueClient, std::shared_ptr<EnergyDetector>>(m, "EnergyDetector")
+      // .def(py::init<>())
       .def("register_client", &EnergyDetector::register_client, py::arg("client"),
-           "Register client");
+           "Register client")
+      .def("get_input_queue", py::overload_cast<>(&EnergyDetector::get_input_queue)
+           )
+      .def_static("create", py::overload_cast<>(  
+          &EnergyDetector::create)
+       );
 
-  py::class_<InterfaceHelper, QueueClient>(m, "InterfaceHelper")
+  py::class_<InterfaceHelper, QueueClient, std::shared_ptr<InterfaceHelper>>(m, "InterfaceHelper")
       .def(py::init<>())
       .def_readwrite("fft", &InterfaceHelper::_fft_helper)
       .def("add_socket", &InterfaceHelper::add_socket, py::arg("use_mcast"), py::arg("iface_ip"),
