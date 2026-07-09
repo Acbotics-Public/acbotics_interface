@@ -17,7 +17,7 @@ before-all = "dnf install -y epel-release && dnf --enablerepo=crb install -y gps
 
 [project]
 name = "acbotics_interface"
-version = "0.1.0"
+version = "2.0.0"
 description = "Acbotics AcSense Interface Library"
 requires-python = ">=3.8"
 dependencies = [
